@@ -2,10 +2,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import App from "./App.jsx";
+import './style.css';
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ProtectedRoute } from "./router/ProtectedRoute.jsx";
-import Login from './pages/Login/Login.jsx';
+import AuthPage from './pages/Login/Login.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import {PublicRoute} from "./router/PublicRoute.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             path="/login"
             element={
               <PublicRoute>
-                <Login />
+                <AuthPage />
               </PublicRoute>
             }
           />
