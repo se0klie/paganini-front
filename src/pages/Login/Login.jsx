@@ -3,11 +3,13 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import '../../style.css';
-import PasswordField from "../../shared components/Inputs";
+import { PasswordField } from "../../shared components/Inputs.jsx";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
+import api from "../../axios";
+import ErrorModal from "../../shared components/Modals.jsx";
+import Cookies from "js-cookie";
 export default function AuthPage() {
-    const { login } = useAuth();
+
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         email: '',
@@ -32,8 +34,40 @@ export default function AuthPage() {
     )
 }
 
-
 function Login({ setCurrentStep }) {
+    const [userData, setUserData] = useState({
+        email: '',
+        password: ''
+    })
+    const navigate = useNavigate();
+    const [openError, setOpenError] = useState(false);
+    const {login} = useAuth();
+    async function handleLogin() {
+        try {
+            if (userData.email === '' || userData.password === '') {
+                alert("Complete los campos")
+                return;
+            }
+            const response = await api.post('/auth/login',
+                {
+                    "correo": userData.email,
+                    "password": userData.password
+                }
+            )
+            if (response.status === 200 || response.status === 201) {
+                Cookies.set('accessToken', response.data.accessToken, { expires: response.data.expiresIn/ (60 * 60 * 24), path: "/" })
+                Cookies.set('refreshToken', response.data.refreshToken, { expires: response.data.expiresIn/ (60 * 60 * 24), path: "/" })
+                navigate('/')
+                login({email: userData.email, token: response.data.accessToken} );
+            }
+
+        } catch (err) {
+            console.error("Login error: ", err)
+            setOpenError(true);
+            return err
+        }
+    }
+
     return (
         <Box
             sx={{
@@ -58,17 +92,27 @@ function Login({ setCurrentStep }) {
                     <Typography variant="body1" fontWeight={600}>
                         E-mail
                     </Typography>
-                    <TextField fullWidth size="small" placeholder="Ingresa tu correo" />
+                    <TextField fullWidth size="small" placeholder="Ingresa tu correo"
+                        onChange={(e) => {
+                            const { name, value } = e.target;
+                            setUserData((prev) => ({
+                                ...prev,
+                                email: value,
+                            }));
+                        }} />
                 </Box>
 
                 <Box>
                     <Typography variant="body1" fontWeight={600}>
                         Contraseña
                     </Typography>
-                    <TextField fullWidth size="small" type="password" placeholder="Tu contraseña" />
+                    <PasswordField value={userData.password} onChange={(newPassword) =>
+                        setUserData((prev) => ({ ...prev, password: newPassword }))
+                    } />
                     <Typography sx={{
                         cursor: 'pointer',
                         color: 'var(--secondary-accent)',
+                        width: 'fit-content',
                         ':hover': { textDecoration: 'underline' }
                     }}
                         onClick={() => { setCurrentStep(2) }}>Olvidé mi contraseña</Typography>
@@ -87,6 +131,7 @@ function Login({ setCurrentStep }) {
                         background: "var(--color-secondary-dark)",
                     },
                 }}
+                onClick={() => handleLogin()}
             >
                 Ingresar
             </Button>
@@ -107,6 +152,12 @@ function Login({ setCurrentStep }) {
             >
                 Regístrate
             </Button>
+            <ErrorModal
+                open={openError}
+                onClose={() => setOpenError(false)}
+                title="Credenciales incorrectas"
+                message="Usuario o contraseña incorrectas."
+            />
         </Box>
 
     )
