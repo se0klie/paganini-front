@@ -9,6 +9,7 @@ import AuthPage from './pages/Login/Login.jsx';
 import SignupPage from './pages/Login/Signup.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Invoice from './pages/Invoice/Invoice.jsx';
+import Payment from './pages/Payment/Payment.jsx';
 import {PublicRoute} from "./router/PublicRoute.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
