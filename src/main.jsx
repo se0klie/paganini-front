@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./router/ProtectedRoute.jsx";
 import AuthPage from './pages/Login/Login.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Invoice from './pages/Invoice/Invoice.jsx';
+import Payment from './pages/Payment/Payment.jsx';
 import {PublicRoute} from "./router/PublicRoute.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -21,24 +22,31 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <AuthPage />
               </PublicRoute>
             }
-          />
-
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/invoice"
-            element={
-              <ProtectedRoute>
-                <Invoice />
-              </ProtectedRoute>
-            }
-          />
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoice"
+              element={
+                <ProtectedRoute>
+                  <Invoice />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment"
+              element={
+                <PublicRoute>
+                  <Payment />
+                </PublicRoute>
+              }
+            />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
