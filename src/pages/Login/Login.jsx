@@ -111,7 +111,7 @@ function Login({ setCurrentStep }) {
                     } />
                     <Typography sx={{
                         cursor: 'pointer',
-                        color: 'var(--secondary-accent)',
+                        color: 'var(--color-text-secondary)',
                         width: 'fit-content',
                         ':hover': { textDecoration: 'underline' }
                     }}
