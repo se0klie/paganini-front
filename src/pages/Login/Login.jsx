@@ -149,6 +149,7 @@ function Login({ setCurrentStep }) {
                         background: "var(--color-secondary-dark)",
                     },
                 }}
+                onClick={() => {navigate("/signup")}}
             >
                 Regístrate
             </Button>
