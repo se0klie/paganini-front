@@ -6,6 +6,7 @@ import './style.css';
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ProtectedRoute } from "./router/ProtectedRoute.jsx";
 import AuthPage from './pages/Login/Login.jsx';
+import SignupPage from './pages/Login/Signup.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Invoice from './pages/Invoice/Invoice.jsx';
 import {PublicRoute} from "./router/PublicRoute.jsx";
@@ -29,6 +30,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignupPage />
+              </PublicRoute>
             }
           />
           <Route
