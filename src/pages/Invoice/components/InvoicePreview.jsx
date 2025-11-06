@@ -160,7 +160,7 @@ export default function InvoicePreview({
                                     <TableRow sx={{
                                         bgcolor: 'var(--color-primary)',
                                         '& th': { 
-                                            color: 'white',
+                                            color: 'black',
                                             fontWeight: 600,
                                             fontSize: '0.95rem'
                                         }
