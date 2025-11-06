@@ -36,3 +36,33 @@ export default function ErrorModal({ open, onClose, title = "Error", message }) 
     </Modal>
   );
 }
+
+export function SuccessModal({ open, onClose, title = "Éxito", message }) {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="success-modal-title"
+      aria-describedby="success-modal-description"
+    >
+      <Box sx={style}>
+        <Typography
+          id="success-modal-title"
+          sx={{ fontWeight: 600 }}
+          variant="h6"
+          component="h2"
+          gutterBottom
+        >
+          {title}
+        </Typography>
+        <Typography id="success-modal-description" sx={{ mb: 2 }}>
+          {message}
+        </Typography>
+        <Button variant="contained" color="success" onClick={onClose}>
+          Cerrar
+        </Button>
+      </Box>
+    </Modal>
+  );
+}
+
