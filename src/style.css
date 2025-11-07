@@ -43,3 +43,15 @@ html {
     background-color: var(--primary-bg-color);
     color: var(--primary-text-color);
 }
+
+/* Animaciones para EmailVerify */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
