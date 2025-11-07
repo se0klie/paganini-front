@@ -131,21 +131,40 @@ export default function SignupPage() {
 
                 <Divider />
 
-                <Button
-                    sx={{
-                        background: "var(--color-secondary)",
-                        width: "50%",
-                        mx: "auto",
-                        fontWeight: 600,
-                        color: "white",
-                        ":hover": {
-                            background: "var(--color-secondary-dark)",
-                        },
-                    }}
-                    onClick={handleSignup}
-                >
-                    Registrarse
-                </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                    <Button
+                        sx={{
+                            flex: 1,
+                            mt: 1,
+                            fontWeight: 600,
+                            color: "var(--color-text-muted)",
+                            border: '2px solid var(--button-prev-action)',
+                            background: "transparent",
+                            ":hover": {
+                                border: '2px solid var(--button-prev-action-dark)',
+                            },
+                        }}
+                        onClick={() => navigate('/login')}
+                    >
+                        Regresar
+                    </Button>
+                    <Button
+                        sx={{
+                            background: "var(--color-secondary)",
+                            width: "50%",
+                            mt: 1,
+                            mx: "auto",
+                            fontWeight: 600,
+                            color: "white",
+                            ":hover": {
+                                background: "var(--color-secondary-dark)",
+                            },
+                        }}
+                        onClick={handleSignup}
+                    >
+                        Registrarse
+                    </Button>
+                </Box>
                 <ErrorModal
                     open={openError}
                     onClose={() => setOpenError(false)}

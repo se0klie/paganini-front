@@ -11,7 +11,7 @@ const currencySymbols = {
 };
 
 export default function InvoicePreview({ 
-    installments = null,
+    installments = 'cash',
     products = [],
     currency = 'USD',
     customer = {
@@ -33,6 +33,14 @@ export default function InvoicePreview({
     };
 
     const calculateTotals = () => {
+        if(invoiceData.items.length === 0) {
+            return {
+                subtotal: '0.00',
+                tax: '0.00',
+                total: '0.00',
+                installmentAmount: '0.00'
+            };
+        }
         const subtotal = invoiceData.items.reduce((acc, item) => acc + item.total, 0);
         const tax = subtotal * 0.15; // 15% IVA
         const total = subtotal + tax;
@@ -50,16 +58,12 @@ export default function InvoicePreview({
     return (
         <Box sx={{
             backgroundColor: 'var(--color-surface)',
-            p: 3,
             borderRadius: 2,
             boxShadow: 'var(--shadow-md)',
             height: '100%',
             display: 'flex',
             flexDirection: 'column'
         }}>
-            <Typography variant="h6" sx={{ color: 'var(--color-primary)', mb: 3, fontWeight: 600 }}>
-                Vista Previa de Factura
-            </Typography>
 
             <Card elevation={3} sx={{ 
                 bgcolor: 'var(--color-surface)',
@@ -160,7 +164,7 @@ export default function InvoicePreview({
                                     <TableRow sx={{
                                         bgcolor: 'var(--color-primary)',
                                         '& th': { 
-                                            color: 'white',
+                                            color: 'black',
                                             fontWeight: 600,
                                             fontSize: '0.95rem'
                                         }

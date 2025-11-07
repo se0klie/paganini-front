@@ -1,4 +1,4 @@
-import { Box, Button, Divider, TextField, Typography, Stack, Tooltip, IconButton } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography, Stack, Tooltip, IconButton, Modal } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
@@ -41,7 +41,7 @@ function Login({ setCurrentStep }) {
     })
     const navigate = useNavigate();
     const [openError, setOpenError] = useState(false);
-    const {login} = useAuth();
+    const { login } = useAuth();
     async function handleLogin() {
         try {
             if (userData.email === '' || userData.password === '') {
@@ -55,10 +55,10 @@ function Login({ setCurrentStep }) {
                 }
             )
             if (response.status === 200 || response.status === 201) {
-                Cookies.set('accessToken', response.data.accessToken, { expires: response.data.expiresIn/ (60 * 60 * 24), path: "/" })
-                Cookies.set('refreshToken', response.data.refreshToken, { expires: response.data.expiresIn/ (60 * 60 * 24), path: "/" })
+                Cookies.set('accessToken', response.data.accessToken, { expires: response.data.expiresIn / (60 * 60 * 24), path: "/" })
+                Cookies.set('refreshToken', response.data.refreshToken, { expires: response.data.expiresIn / (60 * 60 * 24), path: "/" })
                 navigate('/')
-                login({email: userData.email, token: response.data.accessToken} );
+                login({ email: userData.email, token: response.data.accessToken });
             }
 
         } catch (err) {
@@ -131,7 +131,10 @@ function Login({ setCurrentStep }) {
                         background: "var(--color-secondary-dark)",
                     },
                 }}
-                onClick={() => handleLogin()}
+                onClick={() =>
+                    //  handleLogin()
+                    navigate('/')
+                }
             >
                 Ingresar
             </Button>
@@ -149,7 +152,7 @@ function Login({ setCurrentStep }) {
                         background: "var(--color-secondary-dark)",
                     },
                 }}
-                onClick={() => {navigate("/signup")}}
+                onClick={() => { navigate("/signup") }}
             >
                 Regístrate
             </Button>
@@ -239,7 +242,8 @@ function PasswordReset({ setCurrentStep }) {
 function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
     const [values, setValues] = useState(Array(length).fill(""));
     const inputsRef = useRef([]);
-
+    const [modalOpen, setModalOpen] = useState(false);
+    const navigate = useNavigate()
     useEffect(() => {
         if (inputsRef.current[0]) inputsRef.current[0].focus();
     }, []);
@@ -419,11 +423,44 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                             background: "var(--color-secondary-dark)",
                         },
                     }}
-                    onClick={() => setCurrentStep(3)}
+                    onClick={() => {
+                        setModalOpen(true)
+                        setCurrentStep(3)
+                        setTimeout(() => {
+                           setCurrentStep(1)
+                        }, 3000);
+                    }}
                 >
                     Cambiar
                 </Button>
             </Box>
-        </Box>
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+            >
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "white",
+                        p: 4,
+                        borderRadius: 2,
+                        boxShadow: 24,
+                        textAlign: "center",
+                    }}
+                >
+                    <Typography id="modal-title" variant="h6" fontWeight={600}>
+                        ¡Contraseña cambiada con éxito!
+                    </Typography>
+                    <Typography id="modal-description" sx={{ mt: 2 }}>
+                        Serás redirigido al inicio de sesión
+                    </Typography>
+                </Box>
+            </Modal >
+        </Box >
     );
 }

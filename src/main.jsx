@@ -49,7 +49,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               </ProtectedRoute>
             }
           />
-          <Route
+           <Route
             path="/payment"
             element={
               <ProtectedRoute>

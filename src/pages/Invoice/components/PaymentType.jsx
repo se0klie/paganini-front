@@ -39,9 +39,9 @@ export default function PaymentType({ onInstallmentChange }) {
 
     return (
         <Card elevation={3} sx={{
-            height: '100%',
             position: 'relative',
-            overflow: 'visible'
+            overflow: 'visible',
+            width: '100%'
         }}>
             <Box sx={{
                 position: 'absolute',
