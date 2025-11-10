@@ -10,20 +10,15 @@ import {
     Modal,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import React, { useState, useEffect, useRef } from 'react';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useAuth } from '../../context/AuthContext';
 import '../../style.css';
 import { PasswordField } from '../../shared components/Inputs.jsx';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import api from '../../axios';
 import ErrorModal from '../../shared components/Modals.jsx';
-import Cookies from 'js-cookie';
 export default function AuthPage() {
-    const navigate = useNavigate();
-    const [userData, setUserData] = useState({
-        email: '',
-        password: '',
-    });
     const [currentStep, setCurrentStep] = useState(1);
     // steps: 1 login, 2 change password, 3 register
     return (
@@ -114,7 +109,7 @@ function Login({ setCurrentStep }) {
                         size="small"
                         placeholder="Ingresa tu correo"
                         onChange={(e) => {
-                            const { name, value } = e.target;
+                            const value = e.target.value;
                             setUserData((prev) => ({
                                 ...prev,
                                 email: value,
@@ -273,7 +268,6 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
     const [values, setValues] = useState(Array(length).fill(''));
     const inputsRef = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const navigate = useNavigate();
     useEffect(() => {
         if (inputsRef.current[0]) inputsRef.current[0].focus();
     }, []);
