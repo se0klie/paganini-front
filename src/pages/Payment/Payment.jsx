@@ -1,7 +1,21 @@
 import React, { useState } from 'react';
 import {
-    Box, Grid, Typography, Card, Button, Modal, TextField, Divider,
-    Chip, List, ListItem, ListItemText, IconButton, CircularProgress, Alert, Fade
+    Box,
+    Grid,
+    Typography,
+    Card,
+    Button,
+    Modal,
+    TextField,
+    Divider,
+    Chip,
+    List,
+    ListItem,
+    ListItemText,
+    IconButton,
+    CircularProgress,
+    Alert,
+    Fade,
 } from '@mui/material';
 import PaymentIcon from '@mui/icons-material/Payment';
 import AddCardIcon from '@mui/icons-material/AddCard';
@@ -30,12 +44,12 @@ const PaymentPage = () => {
         number: '',
         expiration: '',
         cvv: '',
-        nickname: ''
+        nickname: '',
     });
 
     // Errores de validación para el formulario de tarjeta
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     // Validación básica de campos de tarjeta
     const validateCard = () => {
         const errs = {};
@@ -66,7 +80,7 @@ const PaymentPage = () => {
 
     // Elimina una tarjeta y deselecciona si era la activa
     const handleDeleteCard = (id) => {
-        setCards(cards.filter(card => card.id !== id));
+        setCards(cards.filter((card) => card.id !== id));
         if (selectedCardId === id) setSelectedCardId(null);
     };
 
@@ -117,7 +131,7 @@ const PaymentPage = () => {
                         <Button
                             variant="outlined"
                             startIcon={<ArrowBackIcon />}
-                             onClick={() => navigate('/invoice')}
+                            onClick={() => navigate('/invoice')}
                             sx={{
                                 borderRadius: 2,
                                 textTransform: 'none',
@@ -135,14 +149,22 @@ const PaymentPage = () => {
 
                     <Typography
                         variant="h6"
-                        sx={{ color: 'var(--color-primary)', fontWeight: 600, mb: 3, textAlign: 'center', width: '100%' }}
+                        sx={{
+                            color: 'var(--color-primary)',
+                            fontWeight: 600,
+                            mb: 3,
+                            textAlign: 'center',
+                            width: '100%',
+                        }}
                     >
                         Tarjetas Registradas
                     </Typography>
 
                     {cards.length === 0 && (
                         <Box sx={{ textAlign: 'center', py: 6 }}>
-                            <Typography sx={{ color: 'var(--color-text-muted)' }}>No hay tarjetas registradas</Typography>
+                            <Typography sx={{ color: 'var(--color-text-muted)' }}>
+                                No hay tarjetas registradas
+                            </Typography>
                         </Box>
                     )}
 
@@ -160,22 +182,36 @@ const PaymentPage = () => {
                                         py: 1.5,
                                         transition: 'all 0.3s ease',
                                         bgcolor: selectedCardId === card.id ? '#D0F0FD' : '#FFFFFF', // light blue if selected, white otherwise
-                                        color: selectedCardId === card.id ? '#0A2540' : '#1A1A1A',  // dark text on light blue
-                                        boxShadow: selectedCardId === card.id ? '0 4px 12px rgba(0, 162, 255, 0.2)' : 'none',
+                                        color: selectedCardId === card.id ? '#0A2540' : '#1A1A1A', // dark text on light blue
+                                        boxShadow:
+                                            selectedCardId === card.id
+                                                ? '0 4px 12px rgba(0, 162, 255, 0.2)'
+                                                : 'none',
                                         '&:hover': {
-                                            bgcolor: selectedCardId === card.id ? '#A8E0FF' : '#F0F0F0', // slightly darker blue if selected, light gray on hover
+                                            bgcolor:
+                                                selectedCardId === card.id ? '#A8E0FF' : '#F0F0F0', // slightly darker blue if selected, light gray on hover
                                             cursor: 'pointer',
                                         },
                                     }}
                                 >
-
                                     <ListItemText
                                         primary={card.nickname || card.label}
                                         secondary={`**** **** **** ${card.number.slice(-4)} • Exp: ${card.expiration}`}
                                         primaryTypographyProps={{ fontWeight: 600 }}
                                     />
-                                    <Chip label="Tarjeta" size="small" sx={{ bgcolor: 'var(--color-primary)', color: 'white', mr: 1 }} />
-                                    <IconButton onClick={() => handleDeleteCard(card.id)} edge="end">
+                                    <Chip
+                                        label="Tarjeta"
+                                        size="small"
+                                        sx={{
+                                            bgcolor: 'var(--color-primary)',
+                                            color: 'white',
+                                            mr: 1,
+                                        }}
+                                    />
+                                    <IconButton
+                                        onClick={() => handleDeleteCard(card.id)}
+                                        edge="end"
+                                    >
                                         <DeleteIcon sx={{ color: 'var(--color-text-muted)' }} />
                                     </IconButton>
                                 </ListItem>
@@ -197,16 +233,14 @@ const PaymentPage = () => {
                                 py: 1.5,
                                 '&:hover': {
                                     backgroundColor: 'rgba(10, 37, 64, 0.15)', // soft, semi-transparent fill
-                                    color: 'var(--color-primary)',             // keep text same color
-                                }
-
+                                    color: 'var(--color-primary)', // keep text same color
+                                },
                             }}
                             onClick={handleAddCard}
                         >
                             Agregar tarjeta
                         </Button>
                     )}
-
 
                     <Divider sx={{ my: 4 }} />
 
@@ -222,10 +256,10 @@ const PaymentPage = () => {
                             px: 3,
                             py: 1.5,
                             fontWeight: 600,
-                            "&.Mui-disabled": {
-                                background: "var(--button-prev-action)",
-                                color: "white",
-                                cursor: "not-allowed",
+                            '&.Mui-disabled': {
+                                background: 'var(--button-prev-action)',
+                                color: 'white',
+                                cursor: 'not-allowed',
                                 opacity: 0.7,
                             },
                         }}
@@ -234,7 +268,6 @@ const PaymentPage = () => {
                         Pagar
                     </Button>
                 </Box>
-
 
                 <Box
                     sx={{
@@ -252,11 +285,21 @@ const PaymentPage = () => {
                         Estado del Pago
                     </Typography>
 
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4, textAlign: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            py: 4,
+                            textAlign: 'center',
+                        }}
+                    >
                         {status === 'loading' && (
                             <>
                                 <CircularProgress color="primary" />
-                                <Typography sx={{ mt: 2, color: 'white' }}>Procesando pago...</Typography>
+                                <Typography sx={{ mt: 2, color: 'white' }}>
+                                    Procesando pago...
+                                </Typography>
                             </>
                         )}
 
@@ -277,7 +320,9 @@ const PaymentPage = () => {
                         {!status && (
                             <Box>
                                 <Typography sx={{ fontSize: 64, mb: 2 }}>🕒</Typography>
-                                <Typography sx={{ color: 'white' }}>Esperando acción del usuario</Typography>
+                                <Typography sx={{ color: 'white' }}>
+                                    Esperando acción del usuario
+                                </Typography>
                             </Box>
                         )}
                     </Box>
@@ -298,17 +343,27 @@ const PaymentPage = () => {
                         width: { xs: '90%', sm: 400 },
                     }}
                 >
-                    <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: 'var(--color-primary)' }}>
+                    <Typography
+                        variant="h6"
+                        sx={{ mb: 3, fontWeight: 600, color: 'var(--color-primary)' }}
+                    >
                         Agregar Tarjeta
                     </Typography>
-                    {["label", "number", "expiration", "cvv", "nickname"].map((field, idx) => (
+                    {['label', 'number', 'expiration', 'cvv', 'nickname'].map((field, idx) => (
                         <TextField
                             key={field}
                             fullWidth
-                            label={field === "label" ? "Nombre del titular" :
-                                field === "number" ? "Número (16 dígitos)" :
-                                    field === "expiration" ? "Fecha de expiración (MM/AA)" :
-                                        field === "cvv" ? "CVV" : "Apodo (opcional)"}
+                            label={
+                                field === 'label'
+                                    ? 'Nombre del titular'
+                                    : field === 'number'
+                                      ? 'Número (16 dígitos)'
+                                      : field === 'expiration'
+                                        ? 'Fecha de expiración (MM/AA)'
+                                        : field === 'cvv'
+                                          ? 'CVV'
+                                          : 'Apodo (opcional)'
+                            }
                             variant="outlined"
                             sx={{ mb: idx === 4 ? 3 : 2 }}
                             value={newCard[field]}
@@ -330,7 +385,6 @@ const PaymentPage = () => {
                 </Box>
             </Modal>
         </Box>
-
     );
 };
 

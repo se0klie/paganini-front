@@ -1,10 +1,10 @@
-import { Grid, Box, Button, Divider, TextField, Typography } from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import ErrorModal from "../../shared components/Modals.jsx";
-import { SuccessModal } from "../../shared components/Modals";
-import { useState } from "react";
-import api from "../../axios";
+import { Grid, Box, Button, Divider, TextField, Typography } from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import ErrorModal from '../../shared components/Modals.jsx';
+import { SuccessModal } from '../../shared components/Modals';
+import { useState } from 'react';
+import api from '../../axios';
 import '../../style.css';
 
 export default function SignupPage() {
@@ -18,16 +18,20 @@ export default function SignupPage() {
         lastname: '',
         phone: '',
         password: '',
-        confirmPassword: ''
-    })
+        confirmPassword: '',
+    });
 
     const fields = [
-        { id: "email", label: "Correo electrónico", placeholder: "Ingresa tu correo" },
-        { id: "name", label: "Nombres", placeholder: "Tus nombres" },
-        { id: "lastname", label: "Apellidos", placeholder: "Tus apellidos" },
-        { id: "phone", label: "Celular", placeholder: "09XXXXXXXX" },
-        { id: "password", label: "Contraseña", placeholder: "Tu contraseña" },
-        { id: "confirmPassword", label: "Confirmar contraseña", placeholder: "Repite la contraseña" }
+        { id: 'email', label: 'Correo electrónico', placeholder: 'Ingresa tu correo' },
+        { id: 'name', label: 'Nombres', placeholder: 'Tus nombres' },
+        { id: 'lastname', label: 'Apellidos', placeholder: 'Tus apellidos' },
+        { id: 'phone', label: 'Celular', placeholder: '09XXXXXXXX' },
+        { id: 'password', label: 'Contraseña', placeholder: 'Tu contraseña' },
+        {
+            id: 'confirmPassword',
+            label: 'Confirmar contraseña',
+            placeholder: 'Repite la contraseña',
+        },
     ];
 
     async function handleSignup() {
@@ -36,31 +40,34 @@ export default function SignupPage() {
 
             const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
             const phoneRegex = /^09\d{8}$/;
-            const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+            const passwordRegex =
+                /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?]).{8,}$/;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!nameRegex.test(name) || !nameRegex.test(lastname)) {
-                alert("Nombre y apellido no pueden estar vacíos ni contener números o símbolos.");
+                alert('Nombre y apellido no pueden estar vacíos ni contener números o símbolos.');
                 return;
             }
 
             if (!emailRegex.test(email)) {
-                alert("Ingrese un correo electrónico válido.");
+                alert('Ingrese un correo electrónico válido.');
                 return;
             }
 
             if (!phoneRegex.test(phone)) {
-                alert("El teléfono debe tener 10 dígitos y comenzar con 09.");
+                alert('El teléfono debe tener 10 dígitos y comenzar con 09.');
                 return;
             }
 
             if (!passwordRegex.test(password)) {
-                alert("La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo.");
+                alert(
+                    'La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo.'
+                );
                 return;
             }
 
             if (password !== confirmPassword) {
-                alert("Las contraseñas no son iguales.");
+                alert('Las contraseñas no son iguales.');
                 return;
             }
 
@@ -69,7 +76,7 @@ export default function SignupPage() {
                 apellido: lastname,
                 correo: email,
                 telefono: phone,
-                password: password
+                password: password,
             });
             if (response.status === 200 || response.status === 201) {
                 setOpenSuccess(true);
@@ -78,28 +85,39 @@ export default function SignupPage() {
                     navigate('/login');
                 }, 3000);
             }
-
         } catch (err) {
-            console.error("Signup error: ", err)
+            console.error('Signup error: ', err);
             setOpenError(true);
-            return err
+            return err;
         }
     }
 
     return (
-        <Box sx={{ p: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--color-primary)', minHeight: '100vh' }}>
-            <Typography sx={{ fontWeight: 600, fontSize: '2.5em', color: 'white' }}>Paganini</Typography>
+        <Box
+            sx={{
+                p: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'var(--color-primary)',
+                minHeight: '100vh',
+            }}
+        >
+            <Typography sx={{ fontWeight: 600, fontSize: '2.5em', color: 'white' }}>
+                Paganini
+            </Typography>
             <Box
                 sx={{
-                    backgroundColor: "var(--color-surface)",
+                    backgroundColor: 'var(--color-surface)',
                     p: 4,
                     borderRadius: 2,
                     mt: 5,
-                    width: "70vw",
-                    mx: "auto",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                    display: "flex",
-                    flexDirection: "column",
+                    width: '70vw',
+                    mx: 'auto',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    display: 'flex',
+                    flexDirection: 'column',
                     gap: 3,
                 }}
             >
@@ -118,11 +136,17 @@ export default function SignupPage() {
                                     fullWidth
                                     size="small"
                                     placeholder={field.placeholder}
-                                    type={field.label.toLowerCase().includes("contraseña") ? "password" : "text"}
-                                    onChange={(e) => setUserData(prev => ({
-                                        ...prev,
-                                        [field.id]: e.target.value
-                                    }))}
+                                    type={
+                                        field.label.toLowerCase().includes('contraseña')
+                                            ? 'password'
+                                            : 'text'
+                                    }
+                                    onChange={(e) =>
+                                        setUserData((prev) => ({
+                                            ...prev,
+                                            [field.id]: e.target.value,
+                                        }))
+                                    }
                                 />
                             </Box>
                         </Grid>
@@ -137,10 +161,10 @@ export default function SignupPage() {
                             flex: 1,
                             mt: 1,
                             fontWeight: 600,
-                            color: "var(--color-text-muted)",
+                            color: 'var(--color-text-muted)',
                             border: '2px solid var(--button-prev-action)',
-                            background: "transparent",
-                            ":hover": {
+                            background: 'transparent',
+                            ':hover': {
                                 border: '2px solid var(--button-prev-action-dark)',
                             },
                         }}
@@ -150,14 +174,14 @@ export default function SignupPage() {
                     </Button>
                     <Button
                         sx={{
-                            background: "var(--color-secondary)",
-                            width: "50%",
+                            background: 'var(--color-secondary)',
+                            width: '50%',
                             mt: 1,
-                            mx: "auto",
+                            mx: 'auto',
                             fontWeight: 600,
-                            color: "white",
-                            ":hover": {
-                                background: "var(--color-secondary-dark)",
+                            color: 'white',
+                            ':hover': {
+                                background: 'var(--color-secondary-dark)',
                             },
                         }}
                         onClick={handleSignup}
@@ -179,5 +203,5 @@ export default function SignupPage() {
                 />
             </Box>
         </Box>
-    )
+    );
 }
