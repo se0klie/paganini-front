@@ -32,6 +32,7 @@ export default defineConfig([
       ...js.configs.recommended.rules,
       ...reactHooks.configs['recommended-latest'].rules,
       ...prettier.rules,
+      'camelcase': ['error', { properties: 'always' }],
       'jsx-a11y/alt-text': 'warn',
       'jsx-a11y/anchor-is-valid': 'warn',
       'import/order': ['warn', { groups: [['builtin', 'external', 'internal']] }],
