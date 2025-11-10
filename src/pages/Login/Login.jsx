@@ -9,9 +9,9 @@ import {
     IconButton,
     Modal,
 } from '@mui/material';
-import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import '../../style.css';
 import { PasswordField } from '../../shared components/Inputs.jsx';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
