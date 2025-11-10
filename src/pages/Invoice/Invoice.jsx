@@ -4,15 +4,14 @@ import PaymentType from './components/PaymentType';
 import InvoicePreview from './components/InvoicePreview';
 import ProductSelection from './components/ProductSelection';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function Invoice() {
     const [selectedInstallments, setSelectedInstallments] = useState('cash');
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectedCurrency, setSelectedCurrency] = useState('USD');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     return (
-
         <Box
             sx={{
                 backgroundColor: 'var(--color-bg)',
@@ -100,12 +99,10 @@ export default function Invoice() {
                         selectedProducts.length === 0
                             ? 'Debe seleccionar al menos un producto'
                             : !selectedInstallments
-                                ? 'Debe seleccionar un método de pago o cuotas'
-                                : ''
+                              ? 'Debe seleccionar un método de pago o cuotas'
+                              : ''
                     }
-                    disableHoverListener={
-                        !(selectedProducts.length === 0 || !selectedInstallments)
-                    }
+                    disableHoverListener={!(selectedProducts.length === 0 || !selectedInstallments)}
                 >
                     <span>
                         <Button

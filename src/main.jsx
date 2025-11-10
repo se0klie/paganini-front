@@ -1,10 +1,10 @@
 // src/main.jsx
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './style.css';
-import { AuthProvider } from "./context/AuthContext.jsx";
-import { ProtectedRoute } from "./router/ProtectedRoute.jsx";
+import { AuthProvider } from './context/AuthContext.jsx';
+import { ProtectedRoute } from './router/ProtectedRoute.jsx';
 import AuthPage from './pages/Login/Login.jsx';
 import SignupPage from './pages/Login/Signup.jsx';
 import EmailVerify from './pages/Login/EmailVerify.jsx';

@@ -1,85 +1,102 @@
-import { Box, Button, Divider, TextField, Typography, Stack, Tooltip, IconButton, Modal } from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect, useRef } from "react";
+import {
+    Box,
+    Button,
+    Divider,
+    TextField,
+    Typography,
+    Stack,
+    Tooltip,
+    IconButton,
+    Modal,
+} from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../style.css';
-import { PasswordField } from "../../shared components/Inputs.jsx";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import api from "../../axios";
-import ErrorModal from "../../shared components/Modals.jsx";
-import Cookies from "js-cookie";
+import { PasswordField } from '../../shared components/Inputs.jsx';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import api from '../../axios';
+import ErrorModal from '../../shared components/Modals.jsx';
+import Cookies from 'js-cookie';
 export default function AuthPage() {
-
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         email: '',
-        password: ''
-    })
-    const [currentStep, setCurrentStep] = useState(1)
+        password: '',
+    });
+    const [currentStep, setCurrentStep] = useState(1);
     // steps: 1 login, 2 change password, 3 register
     return (
-        <Box sx={{ p: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--color-primary)', minHeight: '100vh' }}>
-            <Typography sx={{ fontWeight: 600, fontSize: '2.5em', color: 'white' }}>Paganini</Typography>
-            {currentStep === 1 && (
-                <Login setCurrentStep={setCurrentStep} />
-            )}
-            {currentStep === 2 && (
-                <PasswordReset setCurrentStep={setCurrentStep} />
-            )}
-            {currentStep === 3 && (
-                <ChangePassword setCurrentStep={setCurrentStep} />
-            )}
-
+        <Box
+            sx={{
+                p: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'var(--color-primary)',
+                minHeight: '100vh',
+            }}
+        >
+            <Typography sx={{ fontWeight: 600, fontSize: '2.5em', color: 'white' }}>
+                Paganini
+            </Typography>
+            {currentStep === 1 && <Login setCurrentStep={setCurrentStep} />}
+            {currentStep === 2 && <PasswordReset setCurrentStep={setCurrentStep} />}
+            {currentStep === 3 && <ChangePassword setCurrentStep={setCurrentStep} />}
         </Box>
-    )
+    );
 }
 
 function Login({ setCurrentStep }) {
     const [userData, setUserData] = useState({
         email: '',
-        password: ''
-    })
+        password: '',
+    });
     const navigate = useNavigate();
     const [openError, setOpenError] = useState(false);
     const { login } = useAuth();
     async function handleLogin() {
         try {
             if (userData.email === '' || userData.password === '') {
-                alert("Complete los campos")
+                alert('Complete los campos');
                 return;
             }
-            const response = await api.post('/auth/login',
-                {
-                    "correo": userData.email,
-                    "password": userData.password
-                }
-            )
+            const response = await api.post('/auth/login', {
+                correo: userData.email,
+                password: userData.password,
+            });
             if (response.status === 200 || response.status === 201) {
-                Cookies.set('accessToken', response.data.accessToken, { expires: response.data.expiresIn / (60 * 60 * 24), path: "/" })
-                Cookies.set('refreshToken', response.data.refreshToken, { expires: response.data.expiresIn / (60 * 60 * 24), path: "/" })
-                navigate('/')
+                Cookies.set('accessToken', response.data.accessToken, {
+                    expires: response.data.expiresIn / (60 * 60 * 24),
+                    path: '/',
+                });
+                Cookies.set('refreshToken', response.data.refreshToken, {
+                    expires: response.data.expiresIn / (60 * 60 * 24),
+                    path: '/',
+                });
+                navigate('/');
                 login({ email: userData.email, token: response.data.accessToken });
             }
-
         } catch (err) {
-            console.error("Login error: ", err)
+            console.error('Login error: ', err);
             setOpenError(true);
-            return err
+            return err;
         }
     }
 
     return (
         <Box
             sx={{
-                backgroundColor: "var(--color-surface)",
+                backgroundColor: 'var(--color-surface)',
                 p: 4,
                 borderRadius: 2,
                 mt: 5,
-                width: "400px",
-                mx: "auto",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                display: "flex",
-                flexDirection: "column",
+                width: '400px',
+                mx: 'auto',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 3,
             }}
         >
@@ -92,48 +109,61 @@ function Login({ setCurrentStep }) {
                     <Typography variant="body1" fontWeight={600}>
                         E-mail
                     </Typography>
-                    <TextField fullWidth size="small" placeholder="Ingresa tu correo"
+                    <TextField
+                        fullWidth
+                        size="small"
+                        placeholder="Ingresa tu correo"
                         onChange={(e) => {
                             const { name, value } = e.target;
                             setUserData((prev) => ({
                                 ...prev,
                                 email: value,
                             }));
-                        }} />
+                        }}
+                    />
                 </Box>
 
                 <Box>
                     <Typography variant="body1" fontWeight={600}>
                         Contraseña
                     </Typography>
-                    <PasswordField value={userData.password} onChange={(newPassword) =>
-                        setUserData((prev) => ({ ...prev, password: newPassword }))
-                    } />
-                    <Typography sx={{
-                        cursor: 'pointer',
-                        color: 'var(--secondary-accent)',
-                        width: 'fit-content',
-                        ':hover': { textDecoration: 'underline' }
-                    }}
-                        onClick={() => { setCurrentStep(2) }}>Olvidé mi contraseña</Typography>
+                    <PasswordField
+                        value={userData.password}
+                        onChange={(newPassword) =>
+                            setUserData((prev) => ({ ...prev, password: newPassword }))
+                        }
+                    />
+                    <Typography
+                        sx={{
+                            cursor: 'pointer',
+                            color: 'var(--secondary-accent)',
+                            width: 'fit-content',
+                            ':hover': { textDecoration: 'underline' },
+                        }}
+                        onClick={() => {
+                            setCurrentStep(2);
+                        }}
+                    >
+                        Olvidé mi contraseña
+                    </Typography>
                 </Box>
             </Stack>
 
             <Button
                 sx={{
-                    background: "var(--color-secondary)",
-                    width: "50%",
-                    mx: "auto",
+                    background: 'var(--color-secondary)',
+                    width: '50%',
+                    mx: 'auto',
                     mt: 1,
                     fontWeight: 600,
-                    color: "white",
-                    ":hover": {
-                        background: "var(--color-secondary-dark)",
+                    color: 'white',
+                    ':hover': {
+                        background: 'var(--color-secondary-dark)',
                     },
                 }}
-                onClick={() =>
-                    //  handleLogin()
-                    navigate('/')
+                onClick={
+                    () => handleLogin()
+                    //navigate('/')
                 }
             >
                 Ingresar
@@ -143,16 +173,18 @@ function Login({ setCurrentStep }) {
 
             <Button
                 sx={{
-                    background: "var(--color-secondary)",
-                    width: "50%",
-                    mx: "auto",
+                    background: 'var(--color-secondary)',
+                    width: '50%',
+                    mx: 'auto',
                     fontWeight: 600,
-                    color: "white",
-                    ":hover": {
-                        background: "var(--color-secondary-dark)",
+                    color: 'white',
+                    ':hover': {
+                        background: 'var(--color-secondary-dark)',
                     },
                 }}
-                onClick={() => { navigate("/signup") }}
+                onClick={() => {
+                    navigate('/signup');
+                }}
             >
                 Regístrate
             </Button>
@@ -163,32 +195,32 @@ function Login({ setCurrentStep }) {
                 message="Usuario o contraseña incorrectas."
             />
         </Box>
-
-    )
+    );
 }
-
-
 
 function PasswordReset({ setCurrentStep }) {
     return (
         <Box
             sx={{
-                backgroundColor: "var(--color-surface)",
+                backgroundColor: 'var(--color-surface)',
                 p: 4,
                 borderRadius: 2,
                 mt: 5,
-                width: "400px",
-                mx: "auto",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                display: "flex",
-                flexDirection: "column",
+                width: '400px',
+                mx: 'auto',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 3,
             }}
         >
             <Typography variant="h5" textAlign="center" fontWeight={600}>
                 Enviar código de recuperación
             </Typography>
-            <Typography variant="body">Se enviará un código al correo ingresado en caso de que exista. Una vez recibido, ingrésalo en el siguiente paso junto a tu nueva contraseña. </Typography>
+            <Typography variant="body">
+                Se enviará un código al correo ingresado en caso de que exista. Una vez recibido,
+                ingrésalo en el siguiente paso junto a tu nueva contraseña.{' '}
+            </Typography>
 
             <Stack spacing={2}>
                 <Box>
@@ -205,10 +237,10 @@ function PasswordReset({ setCurrentStep }) {
                         flex: 1,
                         mt: 1,
                         fontWeight: 600,
-                        color: "var(--color-text-muted)",
+                        color: 'var(--color-text-muted)',
                         border: '2px solid var(--button-prev-action)',
-                        background: "transparent",
-                        ":hover": {
+                        background: 'transparent',
+                        ':hover': {
                             border: '2px solid var(--button-prev-action-dark)',
                         },
                     }}
@@ -222,10 +254,10 @@ function PasswordReset({ setCurrentStep }) {
                         flex: 1,
                         mt: 1,
                         fontWeight: 600,
-                        color: "white",
-                        background: "var(--color-secondary)",
-                        ":hover": {
-                            background: "var(--color-secondary-dark)",
+                        color: 'white',
+                        background: 'var(--color-secondary)',
+                        ':hover': {
+                            background: 'var(--color-secondary-dark)',
                         },
                     }}
                     onClick={() => setCurrentStep(3)}
@@ -233,31 +265,29 @@ function PasswordReset({ setCurrentStep }) {
                     Recuperar
                 </Button>
             </Box>
-
         </Box>
-
-    )
+    );
 }
 
 function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
-    const [values, setValues] = useState(Array(length).fill(""));
+    const [values, setValues] = useState(Array(length).fill(''));
     const inputsRef = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     useEffect(() => {
         if (inputsRef.current[0]) inputsRef.current[0].focus();
     }, []);
 
     useEffect(() => {
-        const code = values.join("");
-        if (code.length === length && !values.includes("")) {
+        const code = values.join('');
+        if (code.length === length && !values.includes('')) {
             onComplete && onComplete(code);
         }
     }, [values, length, onComplete]);
 
     const handleChange = (e, index) => {
         const raw = e.target.value;
-        const char = raw.replace(/\D/g, "").slice(0, 1);
+        const char = raw.replace(/\D/g, '').slice(0, 1);
 
         const newValues = [...values];
         newValues[index] = char;
@@ -271,32 +301,32 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
     const handleKeyDown = (e, index) => {
         const key = e.key;
 
-        if (key === "Backspace") {
+        if (key === 'Backspace') {
             if (values[index]) {
                 const newValues = [...values];
-                newValues[index] = "";
+                newValues[index] = '';
                 setValues(newValues);
             } else if (index > 0) {
                 inputsRef.current[index - 1]?.focus();
             }
         }
 
-        if (key === "ArrowLeft" && index > 0) {
+        if (key === 'ArrowLeft' && index > 0) {
             inputsRef.current[index - 1]?.focus();
         }
 
-        if (key === "ArrowRight" && index < length - 1) {
+        if (key === 'ArrowRight' && index < length - 1) {
             inputsRef.current[index + 1]?.focus();
         }
     };
 
     const handlePaste = (e) => {
         e.preventDefault();
-        const paste = (e.clipboardData || window.clipboardData).getData("text");
-        const digits = paste.replace(/\D/g, "").slice(0, length).split("");
+        const paste = (e.clipboardData || window.clipboardData).getData('text');
+        const digits = paste.replace(/\D/g, '').slice(0, length).split('');
         if (digits.length === 0) return;
 
-        const newValues = Array(length).fill("");
+        const newValues = Array(length).fill('');
         digits.forEach((d, i) => (newValues[i] = d));
         setValues(newValues);
 
@@ -307,15 +337,15 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
     return (
         <Box
             sx={{
-                backgroundColor: "var(--color-surface)",
+                backgroundColor: 'var(--color-surface)',
                 p: 4,
                 borderRadius: 2,
                 mt: 5,
-                width: "400px",
-                mx: "auto",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                display: "flex",
-                flexDirection: "column",
+                width: '400px',
+                mx: 'auto',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 3,
             }}
         >
@@ -330,10 +360,10 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
 
                 <Box
                     sx={{
-                        display: "flex",
+                        display: 'flex',
                         gap: 2,
-                        justifyContent: "space-between",
-                        width: "100%",
+                        justifyContent: 'space-between',
+                        width: '100%',
                     }}
                     onPaste={handlePaste}
                 >
@@ -346,20 +376,20 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                             onKeyDown={(e) => handleKeyDown(e, index)}
                             sx={{
                                 flex: 1,
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "8px",
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '8px',
                                 },
                             }}
                             inputProps={{
                                 maxLength: 1,
-                                inputMode: "numeric",
-                                pattern: "[0-9]*",
+                                inputMode: 'numeric',
+                                pattern: '[0-9]*',
                                 style: {
-                                    textAlign: "center",
-                                    fontSize: "1.5rem",
-                                    padding: "0.8rem 0",
+                                    textAlign: 'center',
+                                    fontSize: '1.5rem',
+                                    padding: '0.8rem 0',
                                 },
-                                "aria-label": `Código dígito ${index + 1}`,
+                                'aria-label': `Código dígito ${index + 1}`,
                             }}
                         />
                     ))}
@@ -376,7 +406,7 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                         placement="right"
                         arrow
                         title={
-                            <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                            <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
                                 <li>Mínimo 8 caracteres</li>
                                 <li>Al menos una mayúscula</li>
                                 <li>Al menos un número</li>
@@ -390,7 +420,6 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                     </Tooltip>
                 </Stack>
 
-
                 <PasswordField />
             </Stack>
 
@@ -400,10 +429,10 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                         flex: 1,
                         mt: 1,
                         fontWeight: 600,
-                        color: "var(--color-text-muted)",
+                        color: 'var(--color-text-muted)',
                         border: '2px solid var(--button-prev-action)',
-                        background: "transparent",
-                        ":hover": {
+                        background: 'transparent',
+                        ':hover': {
                             border: '2px solid var(--button-prev-action-dark)',
                         },
                     }}
@@ -417,17 +446,17 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                         flex: 1,
                         mt: 1,
                         fontWeight: 600,
-                        color: "white",
-                        background: "var(--color-secondary)",
-                        ":hover": {
-                            background: "var(--color-secondary-dark)",
+                        color: 'white',
+                        background: 'var(--color-secondary)',
+                        ':hover': {
+                            background: 'var(--color-secondary-dark)',
                         },
                     }}
                     onClick={() => {
-                        setModalOpen(true)
-                        setCurrentStep(3)
+                        setModalOpen(true);
+                        setCurrentStep(3);
                         setTimeout(() => {
-                           setCurrentStep(1)
+                            setCurrentStep(1);
                         }, 3000);
                     }}
                 >
@@ -442,15 +471,15 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
             >
                 <Box
                     sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        backgroundColor: "white",
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: 'white',
                         p: 4,
                         borderRadius: 2,
                         boxShadow: 24,
-                        textAlign: "center",
+                        textAlign: 'center',
                     }}
                 >
                     <Typography id="modal-title" variant="h6" fontWeight={600}>
@@ -460,7 +489,7 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                         Serás redirigido al inicio de sesión
                     </Typography>
                 </Box>
-            </Modal >
-        </Box >
+            </Modal>
+        </Box>
     );
 }

@@ -1,33 +1,33 @@
 :root {
     /* Mainly titles, subtitles */
-    --color-primary: #0A2540;
-    --color-secondary: #1B3A5D;
-    --color-primary-dark: #081E30;
-    --color-secondary-dark: #162E4B;
+    --color-primary: #0a2540;
+    --color-secondary: #1b3a5d;
+    --color-primary-dark: #081e30;
+    --color-secondary-dark: #162e4b;
 
     /* Buttons */
-    --secondary-accent: #00AB6B;
-    --secondary-accent-dark: #008F57;
-    --secondary-accent-alternative: #B8860B;
+    --secondary-accent: #00ab6b;
+    --secondary-accent-dark: #008f57;
+    --secondary-accent-alternative: #b8860b;
     --secondary-accent-alternative-dark: #a4790c;
     --button-prev-action: #dadada;
     --button-prev-action-dark: #bfbfbf;
 
     /* Background for html, modals */
-    --color-bg: #F6F9FC;
-    --color-surface: #FFFFFF;
-    --color-border: #E0E6ED;
+    --color-bg: #f6f9fc;
+    --color-surface: #ffffff;
+    --color-border: #e0e6ed;
 
     /* textsss */
-    --color-text-primary: #1A1A1A;
+    --color-text-primary: #1a1a1a;
     --color-text-secondary: #454745;
-    --color-text-muted: #7A7A7A;
+    --color-text-muted: #7a7a7a;
 
     /* requests status */
-    --color-success: #00A86B;
-    --color-warning: #B8860B;
-    --color-error: #D64545;
-    --color-info: #0284C7;
+    --color-success: #00a86b;
+    --color-warning: #b8860b;
+    --color-error: #d64545;
+    --color-info: #0284c7;
 
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
