@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Grid, Typography, Button, Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PaymentType from './components/PaymentType';
 import InvoicePreview from './components/InvoicePreview';
 import ProductSelection from './components/ProductSelection';
-import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function Invoice() {
     const [selectedInstallments, setSelectedInstallments] = useState('cash');
