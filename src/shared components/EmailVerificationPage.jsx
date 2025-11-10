@@ -8,7 +8,7 @@ import {
     Fade,
     Zoom,
     Card,
-    CardContent
+    CardContent,
 } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
@@ -38,7 +38,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
     // Manejar envío de email
     const handleSendCode = () => {
         setEmailError('');
-        
+
         if (!email.trim()) {
             setEmailError('Por favor ingresa tu correo electrónico');
             return;
@@ -64,7 +64,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
     // Manejar cambio en campos de código
     const handleCodeChange = (e, index) => {
         const raw = e.target.value;
-        const char = raw.replace(/\D/g, "").slice(0, 1);
+        const char = raw.replace(/\D/g, '').slice(0, 1);
 
         const newValues = [...codeValues];
         newValues[index] = char;
@@ -80,21 +80,21 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
     const handleCodeKeyDown = (e, index) => {
         const key = e.key;
 
-        if (key === "Backspace") {
+        if (key === 'Backspace') {
             if (codeValues[index]) {
                 const newValues = [...codeValues];
-                newValues[index] = "";
+                newValues[index] = '';
                 setCodeValues(newValues);
             } else if (index > 0) {
                 inputsRef.current[index - 1]?.focus();
             }
         }
 
-        if (key === "ArrowLeft" && index > 0) {
+        if (key === 'ArrowLeft' && index > 0) {
             inputsRef.current[index - 1]?.focus();
         }
 
-        if (key === "ArrowRight" && index < 5) {
+        if (key === 'ArrowRight' && index < 5) {
             inputsRef.current[index + 1]?.focus();
         }
     };
@@ -102,11 +102,11 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
     // Manejar pegar código
     const handlePaste = (e) => {
         e.preventDefault();
-        const paste = (e.clipboardData || window.clipboardData).getData("text");
-        const digits = paste.replace(/\D/g, "").slice(0, 6).split("");
+        const paste = (e.clipboardData || window.clipboardData).getData('text');
+        const digits = paste.replace(/\D/g, '').slice(0, 6).split('');
         if (digits.length === 0) return;
 
-        const newValues = Array(6).fill("");
+        const newValues = Array(6).fill('');
         digits.forEach((d, i) => (newValues[i] = d));
         setCodeValues(newValues);
 
@@ -116,15 +116,15 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
 
     // Verificar código
     const handleVerifyCode = () => {
-        const code = codeValues.join("");
-        
+        const code = codeValues.join('');
+
         if (code.length !== 6) {
             setCodeError('Por favor ingresa el código completo de 6 dígitos');
             return;
         }
 
         setIsVerifying(true);
-        
+
         // Simular verificación (delay de 1.5 segundos)
         setTimeout(() => {
             // Validar código (en producción esto sería con el backend)
@@ -144,30 +144,34 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
         }, 1500);
     };
 
-
     return (
-        <Box sx={{
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'var(--color-primary)',
-            minHeight: '100vh',
-            position: 'relative',
-            overflow: 'hidden'
-        }}>
+        <Box
+            sx={{
+                p: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'var(--color-primary)',
+                minHeight: '100vh',
+                position: 'relative',
+                overflow: 'hidden',
+            }}
+        >
             {/* Efecto de fondo animado */}
-            <Box sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'linear-gradient(135deg, var(--color-primary) 0%, rgba(0,0,0,0.3) 100%)',
-                opacity: 0.5,
-                zIndex: 0
-            }} />
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background:
+                        'linear-gradient(135deg, var(--color-primary) 0%, rgba(0,0,0,0.3) 100%)',
+                    opacity: 0.5,
+                    zIndex: 0,
+                }}
+            />
 
             <Typography
                 sx={{
@@ -177,7 +181,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                     mb: 4,
                     position: 'relative',
                     zIndex: 1,
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
                 }}
             >
                 Paganini
@@ -193,7 +197,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                     zIndex: 1,
                     overflow: 'visible',
                     background: 'var(--color-surface)',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                 }}
             >
                 <CardContent sx={{ p: 4 }}>
@@ -211,18 +215,28 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         mb: 2,
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
                                     }}
                                 >
                                     <EmailIcon sx={{ fontSize: 40, color: 'white' }} />
                                 </Box>
 
-                                <Typography variant="h5" fontWeight={700} textAlign="center" sx={{ color: 'var(--color-primary)' }}>
+                                <Typography
+                                    variant="h5"
+                                    fontWeight={700}
+                                    textAlign="center"
+                                    sx={{ color: 'var(--color-primary)' }}
+                                >
                                     Verificar Email
                                 </Typography>
 
-                                <Typography variant="body2" textAlign="center" sx={{ color: 'var(--color-text-muted)', mb: 2 }}>
-                                    Ingresa tu correo electrónico para recibir un código de verificación
+                                <Typography
+                                    variant="body2"
+                                    textAlign="center"
+                                    sx={{ color: 'var(--color-text-muted)', mb: 2 }}
+                                >
+                                    Ingresa tu correo electrónico para recibir un código de
+                                    verificación
                                 </Typography>
 
                                 <TextField
@@ -244,12 +258,14 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             borderRadius: 2,
-                                        }
+                                        },
                                     }}
                                     InputProps={{
                                         startAdornment: (
-                                            <EmailIcon sx={{ mr: 1, color: 'var(--color-text-muted)' }} />
-                                        )
+                                            <EmailIcon
+                                                sx={{ mr: 1, color: 'var(--color-text-muted)' }}
+                                            />
+                                        ),
                                     }}
                                 />
 
@@ -272,7 +288,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         },
                                         '&:disabled': {
                                             background: 'var(--color-text-muted)',
-                                        }
+                                        },
                                     }}
                                 >
                                     {isVerifying ? 'Enviando...' : 'Enviar código'}
@@ -286,8 +302,8 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         textTransform: 'none',
                                         '&:hover': {
                                             backgroundColor: 'transparent',
-                                            textDecoration: 'underline'
-                                        }
+                                            textDecoration: 'underline',
+                                        },
                                     }}
                                 >
                                     Regresar
@@ -311,21 +327,35 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         justifyContent: 'center',
                                         mb: 2,
                                         boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-                                        animation: 'pulse 2s infinite'
+                                        animation: 'pulse 2s infinite',
                                     }}
                                 >
                                     <VerifiedUserIcon sx={{ fontSize: 40, color: 'white' }} />
                                 </Box>
 
-                                <Typography variant="h5" fontWeight={700} textAlign="center" sx={{ color: 'var(--color-primary)' }}>
+                                <Typography
+                                    variant="h5"
+                                    fontWeight={700}
+                                    textAlign="center"
+                                    sx={{ color: 'var(--color-primary)' }}
+                                >
                                     Ingresa el código
                                 </Typography>
 
-                                <Typography variant="body2" textAlign="center" sx={{ color: 'var(--color-text-muted)', mb: 1 }}>
+                                <Typography
+                                    variant="body2"
+                                    textAlign="center"
+                                    sx={{ color: 'var(--color-text-muted)', mb: 1 }}
+                                >
                                     Hemos enviado un código de 6 dígitos a:
                                 </Typography>
 
-                                <Typography variant="body2" fontWeight={600} textAlign="center" sx={{ color: 'var(--color-primary)', mb: 3 }}>
+                                <Typography
+                                    variant="body2"
+                                    fontWeight={600}
+                                    textAlign="center"
+                                    sx={{ color: 'var(--color-primary)', mb: 3 }}
+                                >
                                     {email}
                                 </Typography>
 
@@ -335,7 +365,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         gap: 2,
                                         justifyContent: 'center',
                                         width: '100%',
-                                        mb: 2
+                                        mb: 2,
                                     }}
                                     onPaste={handlePaste}
                                 >
@@ -346,7 +376,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                             value={digit}
                                             onChange={(e) => handleCodeChange(e, index)}
                                             onKeyDown={(e) => handleCodeKeyDown(e, index)}
-                                            type={showCode ? "text" : "password"}
+                                            type={showCode ? 'text' : 'password'}
                                             sx={{
                                                 flex: 1,
                                                 maxWidth: '60px',
@@ -358,22 +388,25 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                                     '& input': {
                                                         textAlign: 'center',
                                                         letterSpacing: '0.5em',
-                                                        padding: '1rem 0'
-                                                    }
-                                                }
+                                                        padding: '1rem 0',
+                                                    },
+                                                },
                                             }}
                                             inputProps={{
                                                 maxLength: 1,
-                                                inputMode: "numeric",
-                                                pattern: "[0-9]*",
-                                                "aria-label": `Código dígito ${index + 1}`,
+                                                inputMode: 'numeric',
+                                                pattern: '[0-9]*',
+                                                'aria-label': `Código dígito ${index + 1}`,
                                             }}
                                         />
                                     ))}
                                 </Box>
 
                                 {codeError && (
-                                    <Typography variant="body2" sx={{ color: 'error.main', textAlign: 'center' }}>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: 'error.main', textAlign: 'center' }}
+                                    >
                                         {codeError}
                                     </Typography>
                                 )}
@@ -388,7 +421,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         textTransform: 'none',
                                         '&:hover': {
                                             borderColor: 'var(--button-prev-action-dark)',
-                                        }
+                                        },
                                     }}
                                 >
                                     {showCode ? 'Ocultar código' : 'Mostrar código'}
@@ -398,7 +431,11 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                     fullWidth
                                     variant="contained"
                                     onClick={handleVerifyCode}
-                                    disabled={isVerifying || codeValues.includes("") || codeValues.join("").length !== 6}
+                                    disabled={
+                                        isVerifying ||
+                                        codeValues.includes('') ||
+                                        codeValues.join('').length !== 6
+                                    }
                                     sx={{
                                         background: 'var(--color-secondary)',
                                         py: 1.5,
@@ -413,7 +450,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         },
                                         '&:disabled': {
                                             background: 'var(--color-text-muted)',
-                                        }
+                                        },
                                     }}
                                 >
                                     {isVerifying ? 'Verificando...' : 'Verificar código'}
@@ -431,8 +468,8 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         textTransform: 'none',
                                         '&:hover': {
                                             backgroundColor: 'transparent',
-                                            textDecoration: 'underline'
-                                        }
+                                            textDecoration: 'underline',
+                                        },
                                     }}
                                 >
                                     Cambiar email
@@ -460,26 +497,35 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         '@keyframes scaleIn': {
                                             '0%': {
                                                 transform: 'scale(0)',
-                                                opacity: 0
+                                                opacity: 0,
                                             },
                                             '50%': {
                                                 transform: 'scale(1.1)',
                                             },
                                             '100%': {
                                                 transform: 'scale(1)',
-                                                opacity: 1
-                                            }
-                                        }
+                                                opacity: 1,
+                                            },
+                                        },
                                     }}
                                 >
                                     <CheckCircleIcon sx={{ fontSize: 70, color: 'white' }} />
                                 </Box>
 
-                                <Typography variant="h4" fontWeight={700} textAlign="center" sx={{ color: '#4caf50', mb: 1 }}>
+                                <Typography
+                                    variant="h4"
+                                    fontWeight={700}
+                                    textAlign="center"
+                                    sx={{ color: '#4caf50', mb: 1 }}
+                                >
                                     ¡Email Verificado!
                                 </Typography>
 
-                                <Typography variant="body1" textAlign="center" sx={{ color: 'var(--color-text-muted)', mb: 4 }}>
+                                <Typography
+                                    variant="body1"
+                                    textAlign="center"
+                                    sx={{ color: 'var(--color-text-muted)', mb: 4 }}
+                                >
                                     Tu correo electrónico ha sido verificado exitosamente.
                                 </Typography>
 
@@ -490,13 +536,20 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         borderRadius: 2,
                                         bgcolor: 'var(--color-bg)',
                                         border: '2px solid #4caf50',
-                                        textAlign: 'center'
+                                        textAlign: 'center',
                                     }}
                                 >
-                                    <Typography variant="body2" sx={{ color: 'var(--color-text-primary)', mb: 1 }}>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: 'var(--color-text-primary)', mb: 1 }}
+                                    >
                                         Correo verificado:
                                     </Typography>
-                                    <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--color-primary)' }}>
+                                    <Typography
+                                        variant="body1"
+                                        fontWeight={600}
+                                        sx={{ color: 'var(--color-primary)' }}
+                                    >
                                         {email}
                                     </Typography>
                                 </Box>
@@ -517,7 +570,7 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                                         '&:hover': {
                                             background: 'var(--color-secondary-dark)',
                                             boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-                                        }
+                                        },
                                     }}
                                 >
                                     Continuar
@@ -527,8 +580,6 @@ export default function EmailVerificationPage({ onVerificationSuccess, onBack })
                     )}
                 </CardContent>
             </Card>
-
         </Box>
     );
 }
-

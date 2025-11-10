@@ -1,14 +1,12 @@
 import { Grid, Box, Button, Divider, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import ErrorModal from '../../shared components/Modals.jsx';
 import { SuccessModal } from '../../shared components/Modals';
 import api from '../../axios';
 import '../../style.css';
 
 export default function SignupPage() {
-    const { login } = useAuth();
     const navigate = useNavigate();
     const [openError, setOpenError] = useState(false);
     const [openSuccess, setOpenSuccess] = useState(false);
@@ -41,7 +39,7 @@ export default function SignupPage() {
             const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
             const phoneRegex = /^09\d{8}$/;
             const passwordRegex =
-                /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+                /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={};':"\\|,.<>/?]).{8,}$/;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!nameRegex.test(name) || !nameRegex.test(lastname)) {
@@ -126,8 +124,8 @@ export default function SignupPage() {
                 </Typography>
 
                 <Grid container spacing={2} sx={{ width: '100%', mx: 'auto' }}>
-                    {fields.map((field, index) => (
-                        <Grid size={{ xs: 12, sm: 6 }}>
+                    {fields.map((field) => (
+                        <Grid key={field.id} size={{ xs: 12, sm: 6 }}>
                             <Box>
                                 <Typography variant="body1" fontWeight={600}>
                                     {field.label}
