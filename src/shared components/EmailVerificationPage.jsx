@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 // Código de prueba quemado (para testing)
 const VALID_CODE = '123456';
 
-export default function EmailVerificationPage({ onVerificationSuccess, onBack }) {
+export default function EmailVerificationPage({ onVerificationSuccess }) {
     const navigate = useNavigate();
     const [step, setStep] = useState(1); // 1: email, 2: código, 3: éxito
     const [email, setEmail] = useState('');
