@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/eslint.config.js">
+<testcase time="0" name="/home/euclasio/paganini-front/eslint.config.js" classname="/home/euclasio/paganini-front/eslint.config" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/App.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/App.jsx" classname="/home/euclasio/paganini-front/src/App" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/axios.js">
+<testcase time="0" name="/home/euclasio/paganini-front/src/axios.js" classname="/home/euclasio/paganini-front/src/axios" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/context/AuthContext.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/context/AuthContext.jsx" classname="/home/euclasio/paganini-front/src/context/AuthContext" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/main.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/main.jsx" classname="/home/euclasio/paganini-front/src/main" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Dashboard/Dashboard.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Dashboard/Dashboard.jsx" classname="/home/euclasio/paganini-front/src/pages/Dashboard/Dashboard" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Invoice/Invoice.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Invoice/Invoice.jsx" classname="/home/euclasio/paganini-front/src/pages/Invoice/Invoice" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Invoice/components/InvoicePreview.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Invoice/components/InvoicePreview.jsx" classname="/home/euclasio/paganini-front/src/pages/Invoice/components/InvoicePreview" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Invoice/components/PaymentType.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Invoice/components/PaymentType.jsx" classname="/home/euclasio/paganini-front/src/pages/Invoice/components/PaymentType" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Invoice/components/ProductSelection.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Invoice/components/ProductSelection.jsx" classname="/home/euclasio/paganini-front/src/pages/Invoice/components/ProductSelection" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Login/EmailVerify.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Login/EmailVerify.jsx" classname="/home/euclasio/paganini-front/src/pages/Login/EmailVerify" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Login/Login.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Login/Login.jsx" classname="/home/euclasio/paganini-front/src/pages/Login/Login" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Login/Signup.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Login/Signup.jsx" classname="/home/euclasio/paganini-front/src/pages/Login/Signup" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/pages/Payment/Payment.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/pages/Payment/Payment.jsx" classname="/home/euclasio/paganini-front/src/pages/Payment/Payment" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/router/ProtectedRoute.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/router/ProtectedRoute.jsx" classname="/home/euclasio/paganini-front/src/router/ProtectedRoute" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/router/PublicRoute.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/router/PublicRoute.jsx" classname="/home/euclasio/paganini-front/src/router/PublicRoute" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/shared components/EmailVerificationPage.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/shared components/EmailVerificationPage.jsx" classname="/home/euclasio/paganini-front/src/shared components/EmailVerificationPage" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/shared components/Inputs.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/shared components/Inputs.jsx" classname="/home/euclasio/paganini-front/src/shared components/Inputs" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/src/shared components/Modals.jsx">
+<testcase time="0" name="/home/euclasio/paganini-front/src/shared components/Modals.jsx" classname="/home/euclasio/paganini-front/src/shared components/Modals" />
+</testsuite>
+<testsuite package="org.eslint" time="0" tests="1" errors="0" name="/home/euclasio/paganini-front/vite.config.js">
+<testcase time="0" name="/home/euclasio/paganini-front/vite.config.js" classname="/home/euclasio/paganini-front/vite.config" />
+</testsuite>
+</testsuites>
