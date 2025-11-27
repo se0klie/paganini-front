@@ -13,7 +13,7 @@ const style = {
     textAlign: 'center',
 };
 
-export default function ErrorModal({ open, onClose, title = 'Error', message }) {
+export function ErrorModal({ open, onClose, title = 'Error', message }) {
     return (
         <Modal
             open={open}

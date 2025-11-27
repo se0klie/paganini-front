@@ -17,7 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import '../../style.css';
 import { PasswordField } from '../../shared components/Inputs.jsx';
 import api from '../../axios';
-import ErrorModal from '../../shared components/Modals.jsx';
+import {ErrorModal} from '../../shared components/Modals.jsx';
 export default function AuthPage() {
     const [currentStep, setCurrentStep] = useState(1);
     // steps: 1 login, 2 change password, 3 register
