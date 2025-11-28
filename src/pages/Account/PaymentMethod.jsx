@@ -5,30 +5,35 @@ import { CiCircleRemove, CiCreditCard1 } from "react-icons/ci";
 export default function PaymentMethodTab() {
     const [cardsRegistered, setCardsRegistered] = useState([
         {
+            id: 1,
             number: '1234 5678 9012 3456',
             holder: 'Juan Pérez',
             expiry: '12/27',
             type: 'Visa'
         },
         {
+            id: 2,
             number: '4321 8765 2109 6543',
             holder: 'María López',
             expiry: '05/26',
             type: 'Mastercard'
         },
         {
+            id: 3,
             number: '9876 5432 1098 7654',
             holder: 'Carlos Andrade',
             expiry: '09/28',
             type: 'Visa'
         },
         {
+            id: 4,
             number: '1111 2222 3333 4444',
             holder: 'Fernanda Torres',
             expiry: '03/29',
             type: 'American Express'
         },
         {
+            id: 5,
             number: '5555 6666 7777 8888',
             holder: 'Luis Martínez',
             expiry: '08/25',
@@ -37,7 +42,7 @@ export default function PaymentMethodTab() {
     ]);
     const [openRemoveCard, setOpenRemoveCard] = useState(false)
     const [openAddCard, setOpenAddCard] = useState(false)
-    const [selectedCardIndex, setSelectedCardIndex] = useState(-1);
+    const [selectedCardId, setSelectedCardId] = useState(-1);
     const [newCardData, setNewCardData] = useState({
         number: '',
         holder: '',
@@ -52,7 +57,13 @@ export default function PaymentMethodTab() {
         if (clean.length === 2) return `${clean.slice(0, 2)}/`;
         if (clean.length > 2) return `${clean.slice(0, 2)}/${clean.slice(2, 4)}`;
 
-        return clean; // fallback
+        return clean;
+    };
+
+    const removeCard = (idToRemove) => {
+        setCardsRegistered(prev =>
+            prev.filter(card => card.id !== idToRemove)
+        );
     };
 
     return (
@@ -90,10 +101,11 @@ export default function PaymentMethodTab() {
                                 <Typography key={index}>
                                     {masked}
                                 </Typography>
+                                <Typography sx={{color: 'gray'}}>{card.holder}</Typography>
                             </Box>
                             <CiCircleRemove size={25} style={{ color: 'red', cursor: 'pointer' }}
                                 onClick={() => {
-                                    setSelectedCardIndex(index)
+                                    setSelectedCardId(card.id)
                                     setOpenRemoveCard(true);
                                 }}
                             />
@@ -111,9 +123,7 @@ export default function PaymentMethodTab() {
                 <DialogActions sx={{ p: 2 }}>
                     <Button onClick={() => setOpenRemoveCard(false)} variant="outlined">Cancelar</Button>
                     <Button onClick={() => {
-                        setCardsRegistered(prev =>
-                            prev.filter((_, i) => i !== selectedCardIndex)
-                        );
+                        removeCard(selectedCardId);
                     }} variant="contained" color="error">
                         Confirmar
                     </Button>
@@ -137,6 +147,7 @@ export default function PaymentMethodTab() {
                         <TextField
                             label="Número de tarjeta"
                             fullWidth
+                            value={newCardData.number}
                             type='number'
                             variant="outlined"
                             InputLabelProps={{ sx: { fontWeight: 600 } }}
@@ -149,6 +160,7 @@ export default function PaymentMethodTab() {
                         <TextField
                             label="Titular de tarjeta"
                             fullWidth
+                            value={newCardData.holder}
                             variant="outlined"
                             InputLabelProps={{ sx: { fontWeight: 600 } }}
                             onChange={(e) => setNewCardData(prev => ({
@@ -160,7 +172,7 @@ export default function PaymentMethodTab() {
                         <TextField
                             label="Fecha de vencimiento"
                             placeholder="MM/AA"
-                            value={expiry}
+                            value={newCardData.expiry}
                             onChange={(e) => setNewCardData(prev => ({
                                 ...prev,
                                 expiry: formatExpiry(e.target.value)
@@ -173,13 +185,6 @@ export default function PaymentMethodTab() {
                             InputLabelProps={{ sx: { fontWeight: 600 } }}
                         />
 
-                        <TextField
-                            label="Tipo"
-                            placeholder="Ej. Visa, Mastercard"
-                            fullWidth
-                            variant="outlined"
-                            InputLabelProps={{ sx: { fontWeight: 600 } }}
-                        />
                     </Box>
 
                 </DialogContent>

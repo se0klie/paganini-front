@@ -1,7 +1,7 @@
-import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material"
+import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Tabs, Tab } from "@mui/material"
 import { GenericInputField, PasswordField } from "../../shared components/Inputs"
 import { useEffect, useState } from "react";
-import { ErrorModal } from "../../shared components/Modals";
+import { ErrorModal, SuccessModal } from "../../shared components/Modals";
 export default function AccountInfoTab() {
     const fields = [
         { label: 'Nombre', type: 'text', placeholder: 'Ej. Juan', var_name: 'nombre' },
@@ -13,13 +13,14 @@ export default function AccountInfoTab() {
     ]
 
     const [form, setForm] = useState({
-        nombre: '',
-        apellido: '',
-        email: '',
-        telefono: '',
-        pais: '',
-        ciudad: ''
+        nombre: 'Hailie Diana',
+        apellido: 'Jimenez Martinez',
+        email: 'hajimart@yahoo.com',
+        telefono: '+593 333 333 3333',
+        pais: 'Ecuador',
+        ciudad: 'Guayaquil'
     });
+    const [newData, setNewData] = useState(form)
     const [passwordForm, setPasswordForm] = useState({
         oldpswd: '',
         newpswd: ''
@@ -29,10 +30,13 @@ export default function AccountInfoTab() {
         newpswd: ""
     });
 
+    const [successModal, setSuccessModal] = useState(false)
     const [editingMode, setEditingMode] = useState(false)
     const [editUserInfo, setEditUserInfo] = useState(false)
     const [editPassword, setEditPassword] = useState(false)
     const [errorModalOpen, setErrorModalOpen] = useState(false)
+    const [open2FAModal, setOpen2FAModal] = useState(false)
+    const [tab, setTab] = useState(0);
 
     const handlePasswordChange = (field, value) => {
         setPasswordForm(prev => ({
@@ -52,7 +56,7 @@ export default function AccountInfoTab() {
             }
         }
 
-        setForm(prev => ({ ...prev, [label]: val }));
+        setNewData(prev => ({ ...prev, [label]: val }));
     };
 
     const handlePasswordUpdate = () => {
@@ -102,7 +106,7 @@ export default function AccountInfoTab() {
                             label={field.label}
                             type={field.type}
                             placeholder={field.placeholder}
-                            value={form[field.var_name] || ""}
+                            value={newData[field.var_name] || ""}
                             onChange={(value) => handleChange(field.var_name, value)}
                             isDisabled={!editingMode}
                         />
@@ -111,14 +115,16 @@ export default function AccountInfoTab() {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, ml: 'auto' }}>
-                    <Button>Cambiar método 2FA</Button>
+                    <Button onClick={() => {
+                        setOpen2FAModal(true)
+                    }}>Cambiar método 2FA</Button>
                     <Button sx={{ border: '1px solid blue' }} onClick={() => {
                         if (editingMode) {
                             setEditUserInfo(true)
                         } else {
                             setEditingMode(true)
                         }
-                    }}>Editar perfil</Button>
+                    }}>{editingMode ? 'Guardar cambios' : 'Editar perfil'}</Button>
                 </Box>
             </Box>
             <Box
@@ -165,7 +171,11 @@ export default function AccountInfoTab() {
                 </DialogContent>
                 <DialogActions sx={{ p: 2 }}>
                     <Button onClick={() => setEditUserInfo(false)} variant="outlined">Cancelar</Button>
-                    <Button onClick={() => console.log(form)} variant="contained" color="primary">
+                    <Button onClick={() => {
+                        setForm(newData)
+                        setEditUserInfo(false)
+                        setSuccessModal(true)
+                    }} variant="contained" color="primary">
                         Confirmar
                     </Button>
                 </DialogActions>
@@ -187,8 +197,90 @@ export default function AccountInfoTab() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog
+                open={open2FAModal}
+                onClose={() => setOpen2FAModal(false)}
+                maxWidth="xs"
+                fullWidth
+            >
+                <DialogTitle sx={{ fontWeight: 'bold' }}>
+                    Cambiar datos
+                </DialogTitle>
+
+                <DialogContent sx={{ pt: 1 }}>
+
+                    <Tabs
+                        value={tab}
+                        onChange={(e, v) => setTab(v)}
+                        variant="fullWidth"
+                        sx={{ mb: 2 }}
+                    >
+                        <Tab label="Email" />
+                        <Tab label="Teléfono" />
+                    </Tabs>
+
+                    {tab === 0 && (
+                        <Box>
+                            <Typography sx={{ fontSize: 14, mb: 1 }}>
+                                Tu correo registrado:
+                            </Typography>
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: 2,
+                                    backgroundColor: '#f5f5f5',
+                                    fontWeight: 600,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {form.email}
+                            </Box>
+                        </Box>
+                    )}
+
+                    {tab === 1 && (
+                        <Box>
+                            <Typography sx={{ fontSize: 14, mb: 1 }}>
+                                Tu número registrado:
+                            </Typography>
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: 2,
+                                    backgroundColor: '#f5f5f5',
+                                    fontWeight: 600,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {form.telefono}
+                            </Box>
+                        </Box>
+                    )}
+                </DialogContent>
+
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={() => setOpen2FAModal(false)} variant="outlined">
+                        Cancelar
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            setSuccessModal(true)
+                            setOpen2FAModal(false)
+                        }}
+                    >
+                        Confirmar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <ErrorModal open={errorModalOpen} onClose={() => setErrorModalOpen(false)}
                 message="Hubo un error al actualizar la contraseña. Por favor, intenta de nuevo."
+            />
+            <SuccessModal open={successModal} onClose={() => setSuccessModal(false)}
+                message="Datos actualizados correctamente."
             />
         </Box >
 
