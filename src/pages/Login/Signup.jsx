@@ -1,7 +1,7 @@
 import { Grid, Box, Button, Divider, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import ErrorModal from '../../shared components/Modals.jsx';
+import {ErrorModal} from '../../shared components/Modals.jsx';
 import { SuccessModal } from '../../shared components/Modals';
 import api from '../../axios';
 import '../../style.css';

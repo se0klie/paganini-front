@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Invoice from './pages/Invoice/Invoice.jsx';
 import Payment from './pages/Payment/Payment.jsx';
 import { PublicRoute } from './router/PublicRoute.jsx';
+import AccountMainPage from './pages/Account/AccountMain.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <AuthProvider>
@@ -26,6 +27,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                         }
                     />
 
+                    <Route
+                        path="/account"
+                        element={
+                            <PublicRoute>
+                                <AccountMainPage />
+                            </PublicRoute>
+                        }
+                    />
                     <Route
                         path="/"
                         element={
