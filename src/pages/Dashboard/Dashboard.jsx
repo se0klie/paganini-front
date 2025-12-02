@@ -1,4 +1,5 @@
 import { Box, Typography, Button, Stack, Grid, Card, CardContent, Divider } from '@mui/material';
+import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -150,6 +151,23 @@ export default function Dashboard() {
                                 onClick={() => navigate('/invoice')}
                             >
                                 Nueva Factura
+                            </Button>
+
+                            <Button
+                                startIcon={<SubscriptionsIcon />}
+                                sx={{
+                                    background: 'var(--color-primary)',
+                                    color: 'white',
+                                    px: 4,
+                                    py: 1.5,
+                                    fontWeight: 600,
+                                    ':hover': {
+                                        background: 'var(--color-primary-dark)',
+                                    },
+                                }}
+                                onClick={() => navigate('/subscriptions')}
+                            >
+                                Mis Suscripciones
                             </Button>
 
                             <Button
