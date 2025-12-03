@@ -20,7 +20,7 @@ export default function AccountMainPage() {
                     display: 'flex'
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', mr: 2, backgroundColor: 'var(--color-secondary)', borderRadius: '50%', width: 40, height: 40 }}
-                        onClick={() => { navigate(-1) }}>
+                        onClick={() => { navigate('/') }}>
                         <FaArrowLeft style={{ color: 'white' }} />
                     </Box>
                     <Button sx={{ backgroundColor: currentTab === 'profile' ? 'var(--color-bg)' : 'var(--color-secondary)', fontSize: 18, fontWeight: currentTab === 'profile' ? 'bold' : 'normal', px: 4 }}
@@ -31,7 +31,6 @@ export default function AccountMainPage() {
                     <Button sx={{ backgroundColor: currentTab !== 'profile' ? 'var(--color-bg)' : 'var(--color-secondary)', fontSize: 18, fontWeight: currentTab !== 'profile' ? 'bold' : 'normal', px: 4 }}
                         onClick={() => {
                             setOpen2FAModal(true)
-                            // setCurrentTab('payment')
                         }}
                     >
                         Mis métodos de pago
