@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Invoice from './pages/Invoice/Invoice.jsx';
 import Payment from './pages/Payment/Payment.jsx';
 import Subscriptions from './pages/Subscriptions/Subscriptions.jsx';
+import History from './pages/Payment/History.jsx';
 import { PublicRoute } from './router/PublicRoute.jsx';
 import AccountMainPage from './pages/Account/AccountMain.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -81,6 +82,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                         element={
                             <ProtectedRoute>
                                 <Subscriptions />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/history"
+                        element={
+                            <ProtectedRoute>
+                                <History />
                             </ProtectedRoute>
                         }
                     />

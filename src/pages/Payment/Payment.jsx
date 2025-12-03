@@ -22,10 +22,13 @@ import AddCardIcon from '@mui/icons-material/AddCard';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
+// import api from '../../axios'; // TODO: Descomentar para conectar con backend
+// import { useAuth } from '../../context/AuthContext'; // TODO: Descomentar para obtener el email del usuario
 // Número máximo de tarjetas permitidas
 const MAX_CARDS = 10;
 
 const PaymentPage = () => {
+    // const { user } = useAuth(); // TODO: Descomentar para obtener el email del usuario
     // Estado de tarjetas registradas
     const [cards, setCards] = useState([]);
 
@@ -37,6 +40,9 @@ const PaymentPage = () => {
 
     // Control de apertura del modal para agregar tarjeta
     const [modalOpen, setModalOpen] = useState(false);
+
+    // Estado para el proceso de guardado de tarjeta
+    const [saving, setSaving] = useState(false);
 
     // Datos de la nueva tarjeta a registrar
     const [newCard, setNewCard] = useState({
@@ -71,10 +77,42 @@ const PaymentPage = () => {
     };
 
     // Guarda la tarjeta si pasa validación y no supera el límite
-    const handleSaveCard = () => {
+    const handleSaveCard = async () => {
         if (!validateCard()) return;
         if (cards.length >= MAX_CARDS) return;
+
+        setSaving(true);
+
+        // TODO: Lógica para conectar con el backend. Descomentar para usar.
+        /*
+        try {
+            const [mes, year] = newCard.expiration.split('/');
+            const payload = {
+                correo: user.email, // "jojusuar@espol.edu.ec",
+                tipo: 'tarjeta',
+                card: {
+                    numeroTarjeta: newCard.number,
+                    titular: newCard.label,
+                    mes: parseInt(mes, 10),
+                    year: parseInt(`20${year}`, 10),
+                    cvv: newCard.cvv,
+                    tipo: 'C', // "C" = crédito, "D" = débito. Esto debería ser un campo en el formulario.
+                    red: 'VISA', // Esto debería detectarse o ser un campo.
+                },
+            };
+
+            // const response = await api.post('/payment-methods', payload);
+            // console.log('Respuesta del servidor:', response.data);
+
+        } catch (error) {
+            console.error('Error al guardar la tarjeta:', error);
+            // Aquí se podría mostrar un error al usuario.
+        } finally {
+            setSaving(false);
+        }
+        */
         setCards([...cards, { ...newCard, id: Date.now() }]);
+        setSaving(false); // Quitar si se usa el bloque try/catch/finally
         handleCloseModal();
     };
 
@@ -349,36 +387,63 @@ const PaymentPage = () => {
                     >
                         Agregar Tarjeta
                     </Typography>
-                    {['label', 'number', 'expiration', 'cvv', 'nickname'].map((field, idx) => (
+                    <TextField
+                        fullWidth
+                        label="Nombre del titular"
+                        variant="outlined"
+                        sx={{ mb: 2 }}
+                        value={newCard.label}
+                        onChange={(e) => setNewCard({ ...newCard, label: e.target.value })}
+                        error={!!errors.label}
+                        helperText={errors.label}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Número (16 dígitos)"
+                        variant="outlined"
+                        sx={{ mb: 2 }}
+                        value={newCard.number}
+                        onChange={(e) => setNewCard({ ...newCard, number: e.target.value })}
+                        error={!!errors.number}
+                        helperText={errors.number}
+                    />
+                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <TextField
-                            key={field}
                             fullWidth
-                            label={
-                                field === 'label'
-                                    ? 'Nombre del titular'
-                                    : field === 'number'
-                                      ? 'Número (16 dígitos)'
-                                      : field === 'expiration'
-                                        ? 'Fecha de expiración (MM/AA)'
-                                        : field === 'cvv'
-                                          ? 'CVV'
-                                          : 'Apodo (opcional)'
-                            }
+                            label="Fecha de expiración (MM/AA)"
                             variant="outlined"
-                            sx={{ mb: idx === 4 ? 3 : 2 }}
-                            value={newCard[field]}
-                            onChange={(e) => setNewCard({ ...newCard, [field]: e.target.value })}
-                            error={!!errors[field]}
-                            helperText={errors[field]}
+                            value={newCard.expiration}
+                            onChange={(e) => setNewCard({ ...newCard, expiration: e.target.value })}
+                            error={!!errors.expiration}
+                            helperText={errors.expiration}
                         />
-                    ))}
+                        <TextField
+                            fullWidth
+                            label="CVV"
+                            variant="outlined"
+                            value={newCard.cvv}
+                            onChange={(e) => setNewCard({ ...newCard, cvv: e.target.value })}
+                            error={!!errors.cvv}
+                            helperText={errors.cvv}
+                        />
+                    </Box>
+                    <TextField
+                        fullWidth
+                        label="Apodo (opcional)"
+                        variant="outlined"
+                        sx={{ mb: 3 }}
+                        value={newCard.nickname}
+                        onChange={(e) => setNewCard({ ...newCard, nickname: e.target.value })}
+                        error={!!errors.nickname}
+                        helperText={errors.nickname}
+                    />
                     <Button
                         variant="contained"
                         color="primary"
                         fullWidth
                         startIcon={<AddCardIcon />}
                         onClick={handleSaveCard}
-                        disabled={cards.length >= MAX_CARDS}
+                        disabled={cards.length >= MAX_CARDS || saving}
                     >
                         Guardar Tarjeta
                     </Button>
