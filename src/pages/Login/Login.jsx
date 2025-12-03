@@ -51,6 +51,7 @@ function Login({ setCurrentStep }) {
     const navigate = useNavigate();
     const [openError, setOpenError] = useState(false);
     const { login } = useAuth();
+    
     async function handleLogin() {
         try {
             if (userData.email === '' || userData.password === '') {
@@ -62,6 +63,7 @@ function Login({ setCurrentStep }) {
                 password: userData.password,
             });
             if (response.status === 200 || response.status === 201) {
+                localStorage.setItem('correo', userData.email);
                 Cookies.set('accessToken', response.data.accessToken, {
                     expires: response.data.expiresIn / (60 * 60 * 24),
                     path: '/',
@@ -158,7 +160,6 @@ function Login({ setCurrentStep }) {
                 }}
                 onClick={
                     () => handleLogin()
-                    //navigate('/')
                 }
             >
                 Ingresar

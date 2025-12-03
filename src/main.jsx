@@ -26,20 +26,19 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             </PublicRoute>
                         }
                     />
-
-                    <Route
-                        path="/account"
-                        element={
-                            <PublicRoute>
-                                <AccountMainPage />
-                            </PublicRoute>
-                        }
-                    />
                     <Route
                         path="/"
                         element={
                             <ProtectedRoute>
                                 <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/account"
+                        element={
+                            <ProtectedRoute>
+                                <AccountMainPage />
                             </ProtectedRoute>
                         }
                     />
