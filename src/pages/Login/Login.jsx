@@ -17,9 +17,10 @@ import { useAuth } from '../../context/AuthContext';
 import '../../style.css';
 import { PasswordField } from '../../shared components/Inputs.jsx';
 import api from '../../axios';
-import {ErrorModal} from '../../shared components/Modals.jsx';
+import { ErrorModal } from '../../shared components/Modals.jsx';
 export default function AuthPage() {
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(1)
+    const [email, setEmail] = useState('');
     // steps: 1 login, 2 change password, 3 register
     return (
         <Box
@@ -37,8 +38,8 @@ export default function AuthPage() {
                 Paganini
             </Typography>
             {currentStep === 1 && <Login setCurrentStep={setCurrentStep} />}
-            {currentStep === 2 && <PasswordReset setCurrentStep={setCurrentStep} />}
-            {currentStep === 3 && <ChangePassword setCurrentStep={setCurrentStep} />}
+            {currentStep === 2 && <PasswordReset setCurrentStep={setCurrentStep} email={email} setEmail={setEmail} />}
+            {currentStep === 3 && <ChangePassword setCurrentStep={setCurrentStep} email={email} />}
         </Box>
     );
 }
@@ -51,7 +52,7 @@ function Login({ setCurrentStep }) {
     const navigate = useNavigate();
     const [openError, setOpenError] = useState(false);
     const { login } = useAuth();
-    
+
     async function handleLogin() {
         try {
             if (userData.email === '' || userData.password === '') {
@@ -194,7 +195,18 @@ function Login({ setCurrentStep }) {
     );
 }
 
-function PasswordReset({ setCurrentStep }) {
+function PasswordReset({ setCurrentStep, setEmail, email }) {
+    async function handleReset() {
+        try {
+            const response = await api.post('/auth/forgot-password', {
+                correo: email
+            })
+            console.log('Password reset response: ', response);
+        } catch (err) {
+            console.error('Password reset error: ', err);
+            return err;
+        }
+    }
     return (
         <Box
             sx={{
@@ -223,7 +235,8 @@ function PasswordReset({ setCurrentStep }) {
                     <Typography variant="body1" fontWeight={600}>
                         E-mail
                     </Typography>
-                    <TextField fullWidth size="small" placeholder="Ingresa tu correo" />
+                    <TextField fullWidth size="small" placeholder="Ingresa tu correo"
+                        onChange={(e) => { setEmail(e.target.value) }} />
                 </Box>
             </Stack>
 
@@ -256,7 +269,15 @@ function PasswordReset({ setCurrentStep }) {
                             background: 'var(--color-secondary-dark)',
                         },
                     }}
-                    onClick={() => setCurrentStep(3)}
+                    onClick={() => {
+                        if (email === '' || !email.includes('@')) {
+                            alert('Por favor ingrese un correo válido');
+                        } else {
+                            setCurrentStep(3)
+                            setEmail(email);
+                            handleReset()
+                        }
+                    }}
                 >
                     Recuperar
                 </Button>
@@ -265,20 +286,19 @@ function PasswordReset({ setCurrentStep }) {
     );
 }
 
-function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
+function ChangePassword({ setCurrentStep, email }) {
+    const length = 6
     const [values, setValues] = useState(Array(length).fill(''));
     const inputsRef = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
     useEffect(() => {
         if (inputsRef.current[0]) inputsRef.current[0].focus();
     }, []);
 
     useEffect(() => {
         const code = values.join('');
-        if (code.length === length && !values.includes('')) {
-            onComplete && onComplete(code);
-        }
-    }, [values, length, onComplete]);
+    }, [values, length]);
 
     const handleChange = (e, index) => {
         const raw = e.target.value;
@@ -328,6 +348,26 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
         const lastIndex = Math.min(digits.length, length) - 1;
         inputsRef.current[lastIndex]?.focus();
     };
+
+    async function handleChangePassword() {
+        try {
+            const response = await api.post('/auth/confirm-forgot-password', {
+                codigo: values.join(''),
+                newPassword: newPassword,
+                correo: email
+            })
+            if (response?.status === 200) {
+                setModalOpen(true);
+                setCurrentStep(3);
+                setTimeout(() => {
+                    setCurrentStep(1);
+                }, 3000);
+            }
+        } catch (err) {
+            console.error('Change password error: ', err);
+            return err;
+        }
+    }
 
     return (
         <Box
@@ -415,7 +455,7 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                     </Tooltip>
                 </Stack>
 
-                <PasswordField />
+                <PasswordField onChange={setNewPassword} />
             </Stack>
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
@@ -448,11 +488,7 @@ function ChangePassword({ setCurrentStep, length = 4, onComplete }) {
                         },
                     }}
                     onClick={() => {
-                        setModalOpen(true);
-                        setCurrentStep(3);
-                        setTimeout(() => {
-                            setCurrentStep(1);
-                        }, 3000);
+                        handleChangePassword();
                     }}
                 >
                     Cambiar
