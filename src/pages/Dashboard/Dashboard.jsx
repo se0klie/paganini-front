@@ -6,10 +6,24 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../shared components/Navbar';
 import '../../style.css';
+import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
     const navigate = useNavigate();
+    const [balance, setBalance] = useState(0.00)
+    async function fetchBalance() {
+        try {
+            const response = await api.get(`/account/users/saldo?correo=${localStorage.getItem('correo')}`);
+            setBalance(response.data.saldo)
+        } catch (err) {
+            console.error(err)
+            return err
+        }
+    }
 
+    useEffect(() => {
+        fetchBalance()
+    }, [])
     return (
         <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
             <Navbar />
@@ -30,7 +44,6 @@ export default function Dashboard() {
                     Aquí puedes administrar tus pagos, facturas y balances de cuenta.
                 </Typography>
 
-                {/* Tarjetas de Resumen */}
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
                         <Card sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 3 }}>
@@ -48,7 +61,7 @@ export default function Dashboard() {
                                         fontWeight: 600,
                                     }}
                                 >
-                                    $5,840.32
+                                    ${balance.toFixed(2)}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -95,11 +108,10 @@ export default function Dashboard() {
 
                 <Divider sx={{ my: 5 }} />
 
-                {/* Botones de Navegación (Acciones Rápidas) */}
                 <Typography variant="h6" sx={{ mb: 2, color: 'var(--color-primary)', fontWeight: 600 }}>
                     Acciones Rápidas
                 </Typography>
-                
+
                 <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     spacing={2}
