@@ -4,6 +4,7 @@ import AccountInfoTab from "./AccountInfo";
 import PaymentMethodTab from "./PaymentMethod";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../shared components/Navbar";
 
 export default function AccountMainPage() {
     const [currentTab, setCurrentTab] = useState('profile')
@@ -12,8 +13,9 @@ export default function AccountMainPage() {
     return (
         <Box sx={{
             backgroundColor: 'var(--color-primary)',
-            height: '100vh',
+            minHeight: '100vh',
         }}>
+            <Navbar />
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: 800, margin: '0 auto' }}>
                 <Box sx={{
                     paddingTop: 10,
