@@ -1,44 +1,18 @@
 import { Box, Typography, Button, Stack, Grid, Card, CardContent, Divider } from '@mui/material';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
-import { useEffect } from 'react';
+import HistoryIcon from '@mui/icons-material/History';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import Navbar from '../../shared components/Navbar';
 import '../../style.css';
 
 export default function Dashboard() {
-    const { logout } = useAuth();
     const navigate = useNavigate();
 
     return (
         <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
-            <Box
-                sx={{
-                    backgroundColor: 'var(--color-primary)',
-                    color: 'var(--color-surface)',
-                    p: 2,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    boxShadow: 'var(--shadow-md)',
-                }}
-            >
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Paganini Dashboard
-                </Typography>
-                <Button
-                    onClick={() => {
-                        logout();
-                        navigate('/login');
-                    }}
-                    sx={{
-                        backgroundColor: 'var(--color-error)',
-                        color: 'white',
-                        ':hover': { backgroundColor: 'var(--color-error)', opacity: 0.9 },
-                    }}
-                >
-                    Cerrar Sesión
-                </Button>
-            </Box>
+            <Navbar />
 
             <Box sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
                 <Typography
@@ -56,6 +30,7 @@ export default function Dashboard() {
                     Aquí puedes administrar tus pagos, facturas y balances de cuenta.
                 </Typography>
 
+                {/* Tarjetas de Resumen */}
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
                         <Card sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 3 }}>
@@ -120,12 +95,20 @@ export default function Dashboard() {
 
                 <Divider sx={{ my: 5 }} />
 
+                {/* Botones de Navegación (Acciones Rápidas) */}
+                <Typography variant="h6" sx={{ mb: 2, color: 'var(--color-primary)', fontWeight: 600 }}>
+                    Acciones Rápidas
+                </Typography>
+                
                 <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     spacing={2}
                     justifyContent="center"
+                    flexWrap="wrap"
+                    useFlexGap
                 >
                     <Button
+                        startIcon={<ReceiptIcon />}
                         sx={{
                             background: 'var(--secondary-accent)',
                             color: 'white',
@@ -141,45 +124,48 @@ export default function Dashboard() {
                         Nueva Factura
                     </Button>
 
-                            <Button
-                                startIcon={<SubscriptionsIcon />}
-                                sx={{
-                                    background: 'var(--color-primary)',
-                                    color: 'white',
-                                    px: 4,
-                                    py: 1.5,
-                                    fontWeight: 600,
-                                    ':hover': {
-                                        background: 'var(--color-primary-dark)',
-                                    },
-                                }}
-                                onClick={() => navigate('/subscriptions')}
-                            >
-                                Mis Suscripciones
-                            </Button>
-
-                            <Button
-                                sx={{
-                                    color: 'white',
-                                    px: 4,
-                                    py: 1.5,
-                                    fontWeight: 600,
-                                    ':hover': { background: '#0369A1' },
-                                }}
-                                disabled={true}
-                                onClick={() => navigate('/transactions')}
-                            >
-                                Transacciones
-                            </Button>
                     <Button
+                        startIcon={<SubscriptionsIcon />}
                         sx={{
+                            background: 'var(--color-primary)',
                             color: 'white',
                             px: 4,
                             py: 1.5,
                             fontWeight: 600,
-                            ':hover': { background: 'var(--color-primary-dark)' },
+                            ':hover': {
+                                background: 'var(--color-primary-dark)',
+                            },
                         }}
-                        disabled={true}
+                        onClick={() => navigate('/subscriptions')}
+                    >
+                        Mis Suscripciones
+                    </Button>
+
+                    <Button
+                        startIcon={<HistoryIcon />}
+                        sx={{
+                            background: '#0369A1',
+                            color: 'white',
+                            px: 4,
+                            py: 1.5,
+                            fontWeight: 600,
+                            ':hover': { background: '#025686' },
+                        }}
+                        onClick={() => navigate('/history')}
+                    >
+                        Historial de Transacciones
+                    </Button>
+
+                    <Button
+                        startIcon={<SettingsIcon />}
+                        sx={{
+                            color: 'var(--color-text-secondary)',
+                            border: '1px solid var(--color-border)',
+                            px: 4,
+                            py: 1.5,
+                            fontWeight: 600,
+                            ':hover': { background: 'var(--color-border)' },
+                        }}
                         onClick={() => navigate('/account')}
                     >
                         Configuración
