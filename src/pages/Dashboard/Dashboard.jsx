@@ -24,6 +24,7 @@ export default function Dashboard() {
     useEffect(() => {
         fetchBalance()
     }, [])
+    
     return (
         <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
             <Navbar />

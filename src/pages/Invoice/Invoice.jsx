@@ -1,21 +1,47 @@
 import React, { useState } from 'react';
-import { Box, Grid, Typography, Button, Tooltip } from '@mui/material';
+import { Box, Grid, Typography, Button, Tooltip, Stack, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PaymentType from './components/PaymentType';
-import InvoicePreview from './components/InvoicePreview';
-import ProductSelection from './components/ProductSelection';
 import Navbar from '../../shared components/Navbar';
+import ContactList from './components/ContactsList';
+import TransactionSide from './components/TransactionSide';
+import PaymentMethodList from './components/PaymentMethodList';
+import InvoicePreview from './components/InvoicePreview';
 
 export default function Invoice() {
-    const [selectedInstallments, setSelectedInstallments] = useState('cash');
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [selectedCurrency, setSelectedCurrency] = useState('USD');
-    const navigate = useNavigate();
-    return (
-        <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>   
-            <Navbar />
+    const currencySymbols = {
+        USD: '$',
+        EUR: '€',
+        MXN: 'MX$',
+    };
 
+    const exchangeRates = {
+        USD: 1,
+        EUR: 0.92,
+        GBP: 0.80,
+        JPY: 150,
+        MXN: 18.20
+    };
+
+    const [selectedContact, setSelectedContact] = useState('')
+    const [amount, setAmount] = useState(0)
+    const [currency, setCurrency] = useState('USD');
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
+    const navigate = useNavigate();
+
+    const handleCurrencyChange = (event) => {
+        const newCurrency = event.target.value;
+        const amountInUSD = amount / exchangeRates[currency];
+
+        const newAmount = amountInUSD * exchangeRates[newCurrency];
+
+        setCurrency(newCurrency);
+        setAmount(newAmount);
+    };
+
+    return (
+        <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
+            <Navbar />
             <Box
                 sx={{
                     backgroundColor: 'var(--color-bg)',
@@ -35,7 +61,7 @@ export default function Invoice() {
                             fontWeight: 600,
                             ':hover': { backgroundColor: 'rgba(10,37,64,0.1)' },
                         }}
-                        onClick={() => navigate('/')} // go back in history
+                        onClick={() => navigate('/')}
                     >
                         Volver
                     </Button>
@@ -50,90 +76,83 @@ export default function Invoice() {
                         textAlign: 'center',
                     }}
                 >
-                    Generar Factura
+                    Nueva transacción
                 </Typography>
 
                 <Box
                     sx={{
-                        width: '100%',
                         display: 'flex',
+                        width: '100%',
                         gap: 3,
-                        flexWrap: 'wrap',
                     }}
                 >
-                    <Box>
-                        <PaymentType onInstallmentChange={setSelectedInstallments} />
-                    </Box>
-
                     <Box
                         sx={{
-                            flex: { xs: '0 0 100%', md: '1 1 50%' },
+                            flex: '1 1 50%',
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 5,
+                            gap: 3,
                         }}
                     >
-                        <Box sx={{ width: '100%' }}>
-                            <ProductSelection
-                                onProductsChange={setSelectedProducts}
-                                onCurrencyChange={setSelectedCurrency}
-                            />
-                        </Box>
-
-                        <Box sx={{ width: '100%' }}>
-                            <InvoicePreview
-                                installments={selectedInstallments}
-                                products={selectedProducts}
-                                currency={selectedCurrency}
-                            />
-                        </Box>
-                    </Box>
+                    <ContactList selectedContact={selectedContact} setSelectedContact={setSelectedContact} />
+                    <TransactionSide amount={amount} setAmount={setAmount} />
+                    <PaymentMethodList selectedPaymentMethod={selectedPaymentMethod} setSelectedPaymentMethod={setSelectedPaymentMethod} />
                 </Box>
 
                 <Box
                     sx={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        mt: 4,
+                        flex: '1 1 50%',
                     }}
                 >
-                    <Tooltip
-                        title={
-                            selectedProducts.length === 0
-                                ? 'Debe seleccionar al menos un producto'
-                                : !selectedInstallments
-                                ? 'Debe seleccionar un método de pago o cuotas'
-                                : ''
-                        }
-                        disableHoverListener={!(selectedProducts.length === 0 || !selectedInstallments)}
-                    >
-                        <span>
-                            <Button
-                                sx={{
-                                    px: 3,
-                                    fontWeight: 600,
-                                    color: 'white',
-                                    background: 'var(--color-secondary)',
-                                    ':hover': {
-                                        background: 'var(--color-secondary-dark)',
-                                    },
-                                    '&.Mui-disabled': {
-                                        background: 'var(--color-text-muted)',
-                                        color: 'white',
-                                        opacity: 0.7,
-                                        cursor: 'not-allowed',
-                                    },
-                                }}
-                                onClick={() => navigate('/payment')}
-                                disabled={selectedProducts.length === 0 || !selectedInstallments}
-                            >
-                                Proceder al pago
-                            </Button>
-                        </span>
-                    </Tooltip>
+                    <InvoicePreview customer={selectedContact} />
                 </Box>
             </Box>
+
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    mt: 4,
+                }}
+            >
+                <Tooltip
+                    title={
+                        amount === 0
+                            ? 'Debe ingresar un monto mayor a 0'
+                            : !selectedContact
+                                ? 'Debe seleccionar un contacto a transferir'
+                                : !selectedPaymentMethod ?
+                                    'Debe seleccionar un método de pago' :
+                                    ''
+                    }
+                >
+                    <span>
+                        <Button
+                            sx={{
+                                px: 3,
+                                fontWeight: 600,
+                                color: 'white',
+                                background: 'var(--color-secondary)',
+                                ':hover': {
+                                    background: 'var(--color-secondary-dark)',
+                                },
+                                '&.Mui-disabled': {
+                                    background: 'var(--color-text-muted)',
+                                    color: 'white',
+                                    opacity: 0.7,
+                                    cursor: 'not-allowed',
+                                },
+                            }}
+                            onClick={() => navigate('/payment')}
+                            disabled={!selectedContact || !selectedPaymentMethod || amount <= 0}
+                        >
+                            Proceder al pago
+                        </Button>
+                    </span>
+                </Tooltip>
+            </Box>
         </Box>
+        </Box >
     );
 }

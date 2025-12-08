@@ -198,11 +198,15 @@ function Login({ setCurrentStep }) {
 function PasswordReset({ setCurrentStep, setEmail, email }) {
     async function handleReset() {
         try {
+            setEmail(email);
             const response = await api.post('/auth/forgot-password', {
                 correo: email
             })
-            console.log('Password reset response: ', response);
+            if (response.status === 200) {
+                setCurrentStep(3)
+            }
         } catch (err) {
+            alert('Hubo un error, intente de nuevo.')
             console.error('Password reset error: ', err);
             return err;
         }
@@ -273,8 +277,7 @@ function PasswordReset({ setCurrentStep, setEmail, email }) {
                         if (email === '' || !email.includes('@')) {
                             alert('Por favor ingrese un correo válido');
                         } else {
-                            setCurrentStep(3)
-                            setEmail(email);
+
                             handleReset()
                         }
                     }}
@@ -292,13 +295,10 @@ function ChangePassword({ setCurrentStep, email }) {
     const inputsRef = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [newPassword, setNewPassword] = useState('');
+
     useEffect(() => {
         if (inputsRef.current[0]) inputsRef.current[0].focus();
     }, []);
-
-    useEffect(() => {
-        const code = values.join('');
-    }, [values, length]);
 
     const handleChange = (e, index) => {
         const raw = e.target.value;
@@ -364,6 +364,7 @@ function ChangePassword({ setCurrentStep, email }) {
                 }, 3000);
             }
         } catch (err) {
+            alert('Hubo un error, intente de nuevo.')
             console.error('Change password error: ', err);
             return err;
         }
