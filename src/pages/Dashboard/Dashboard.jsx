@@ -137,7 +137,7 @@ export default function Dashboard() {
                         Nueva Factura
                     </Button>
 
-                    <Button
+                    {/* <Button
                         startIcon={<SubscriptionsIcon />}
                         sx={{
                             background: 'var(--color-primary)',
@@ -152,7 +152,7 @@ export default function Dashboard() {
                         onClick={() => navigate('/subscriptions')}
                     >
                         Mis Suscripciones
-                    </Button>
+                    </Button> */}
 
                     <Button
                         startIcon={<HistoryIcon />}

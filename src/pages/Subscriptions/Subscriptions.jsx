@@ -42,10 +42,7 @@ export default function Subscriptions() {
             setLoading(true);
             
             // TODO: Reemplazar con el endpoint real del backend cuando esté disponible
-            // Ejemplo: const response = await api.get('/api/suscripciones');
-            // setSubscriptions(response.data);
             
-            // Datos de ejemplo (mock data)
             const mockData = [
                 {
                     id: 1,
@@ -92,9 +89,7 @@ export default function Subscriptions() {
     const handleCancelSubscription = async () => {
         try {
             // TODO: Reemplazar con el endpoint real del backend cuando esté disponible
-            // Ejemplo: await api.delete(`/api/suscripciones/${selectedSubscription.id}`);
-            
-            // Simular eliminación exitosa
+
             setSubscriptions(subscriptions.filter(sub => sub.id !== selectedSubscription.id));
             handleCloseModal();
         } catch (error) {
@@ -135,7 +130,6 @@ export default function Subscriptions() {
                         px: { xs: 2, sm: 3, md: 4 },
                     }}
                 >
-                    {/* Header */}
                     <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
                         <IconButton
                             onClick={() => navigate(-1)}
@@ -155,7 +149,7 @@ export default function Subscriptions() {
                                 color: 'var(--color-primary)',
                             }}
                         >
-                            Mis Suscripciones
+                            Mis transacciones
                         </Typography>
                     </Box>
 
@@ -165,7 +159,6 @@ export default function Subscriptions() {
                         </Alert>
                     )}
 
-                    {/* Tabla de Suscripciones */}
                     <TableContainer
                         component={Paper}
                         sx={{
@@ -208,16 +201,7 @@ export default function Subscriptions() {
                                     >
                                         Descripción
                                     </TableCell>
-                                    <TableCell
-                                        align="center"
-                                        sx={{
-                                            color: 'white',
-                                            fontWeight: 600,
-                                            fontSize: '1rem',
-                                        }}
-                                    >
-                                        Acciones
-                                    </TableCell>
+                                 
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -279,24 +263,6 @@ export default function Subscriptions() {
                                                 >
                                                     {subscription.descripcion}
                                                 </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Button
-                                                    variant="contained"
-                                                    color="error"
-                                                    startIcon={<DeleteIcon />}
-                                                    onClick={() => handleOpenModal(subscription)}
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                        fontWeight: 500,
-                                                        backgroundColor: 'var(--color-error)',
-                                                        '&:hover': {
-                                                            backgroundColor: '#b33838',
-                                                        },
-                                                    }}
-                                                >
-                                                    Cancelar
-                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     ))

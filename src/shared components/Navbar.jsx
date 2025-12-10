@@ -31,7 +31,6 @@ export default function Navbar() {
                 zIndex: 1100,
             }}
         >
-            {/* Logo */}
             <Typography
                 variant="h5"
                 sx={{
@@ -45,7 +44,6 @@ export default function Navbar() {
                 Paganini
             </Typography>
 
-            {/* Menú de Navegación */}
             <Stack direction="row" spacing={2} sx={{ flexGrow: 1 }}>
                 <Button
                     startIcon={<HistoryIcon />}
@@ -58,7 +56,7 @@ export default function Navbar() {
                 >
                     Historial
                 </Button>
-                <Button
+                {/* <Button
                     startIcon={<SubscriptionsIcon />}
                     onClick={() => navigate('/subscriptions')}
                     sx={{
@@ -68,7 +66,7 @@ export default function Navbar() {
                     }}
                 >
                     Suscripciones
-                </Button>
+                </Button> */}
             </Stack>
 
             {/* Perfil y Logout*/}

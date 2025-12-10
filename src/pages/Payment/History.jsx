@@ -197,7 +197,7 @@ const History = () => {
                                     <TableCell sx={{ color: 'white', fontWeight: 600 }}>Beneficiario</TableCell>
                                     <TableCell sx={{ color: 'white', fontWeight: 600 }}>Descripción</TableCell>
                                     <TableCell align="right" sx={{ color: 'white', fontWeight: 600 }}>Monto</TableCell>
-                                    <TableCell align="center" sx={{ color: 'white', fontWeight: 600 }}>Acción</TableCell>
+                                    {/* <TableCell align="center" sx={{ color: 'white', fontWeight: 600 }}>Acción</TableCell> */}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -238,7 +238,7 @@ const History = () => {
                                                         }}
                                                     />
                                                 </TableCell>
-                                                <TableCell align="center">
+                                                {/* <TableCell align="center">
                                                     <Button
                                                         variant="contained"
                                                         size="small"
@@ -259,7 +259,7 @@ const History = () => {
                                                     >
                                                         {buttonInfo.text}
                                                     </Button>
-                                                </TableCell>
+                                                </TableCell> */}
                                             </TableRow>
                                         );
                                     })
@@ -288,22 +288,6 @@ const History = () => {
                                 onChange={(e) => setRefundReason(e.target.value)}
                             />
                         </DialogContent>
-                        <DialogActions sx={{ p: 2, gap: 1 }}>
-                            <Button onClick={handleCloseModal} sx={{ color: 'var(--color-text-secondary)' }}>
-                                Cancelar
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={handleRequestRefund}
-                                disabled={!refundReason.trim()}
-                                sx={{
-                                    backgroundColor: 'var(--color-secondary)',
-                                    '&:hover': { backgroundColor: 'var(--color-secondary-dark)' },
-                                }}
-                            >
-                                Enviar Solicitud
-                            </Button>
-                        </DialogActions>
                     </Dialog>
                 </Box>
             </Box>
