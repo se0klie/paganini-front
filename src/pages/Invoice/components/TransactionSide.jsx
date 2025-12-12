@@ -4,7 +4,7 @@ export default function TransactionSide({ amount, setAmount }) {
         <Box sx={{ border: '1px solid var(--color-border)', borderRadius: 2, p: 2, boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <Box >
                 <Typography variant="subtitle1" fontWeight="600">
-                    Monto a transferir
+                    Monto a transferir (en dólares)
                 </Typography>
                 <Typography sx={{ color: 'text.secondary' }}>
                     Ingresa el monto a transferir

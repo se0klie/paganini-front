@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -6,20 +5,19 @@ import {
     Divider,
     Card,
     CardContent,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Chip,
 } from '@mui/material';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-
+import { useState, useEffect } from 'react';
 const currencySymbols = {
     USD: '$',
     EUR: '€',
     MXN: 'MX$',
+};
+
+const exchangeRates = {
+    USD: 1,
+    EUR: 0.92,
+    MXN: 18.20
 };
 
 export default function InvoicePreview({
@@ -27,6 +25,17 @@ export default function InvoicePreview({
     customer,
     amount
 }) {
+    const [amountMask, setAmountMask] = useState(0)
+    
+    const handleCurrencyChange = () => {
+        const amountInUSD = amount / exchangeRates[currency];
+        setAmountMask(amountInUSD);
+    };
+
+    useEffect(() => {
+        handleCurrencyChange()
+    }, [currency, amount])
+
     const invoiceData = {
         number: 'FACT-001',
         date: new Date().toLocaleDateString(),
@@ -35,14 +44,8 @@ export default function InvoicePreview({
     };
 
     const calculateTotals = () => {
-        const subtotal = Number(amount) || 0;
-        const tax = subtotal * 0.15;
-        const total = subtotal + tax;
-
         return {
-            subtotal: subtotal.toFixed(2),
-            tax: tax.toFixed(2),
-            total: total.toFixed(2),
+            total: Number(amountMask).toFixed(2) || 0
         };
     };
 
@@ -141,7 +144,7 @@ export default function InvoicePreview({
                                         mb: 1,
                                     }}
                                 >
-                                    {( customer && invoiceData?.customer?.nombre + ' ' + invoiceData?.customer?.apellido) || 'Nombre de contacto seleccionado'}
+                                    {(customer && invoiceData?.customer?.nombre + ' ' + invoiceData?.customer?.apellido) || 'Nombre de contacto seleccionado'}
                                 </Typography>
                                 <Typography sx={{ color: 'var(--color-text-secondary)', mb: 1 }}>
                                     Correo: {invoiceData.customer.correo || 'No identificado'}
@@ -166,28 +169,6 @@ export default function InvoicePreview({
                         }}
                     >
                         <Grid container spacing={1}>
-                            <Grid item xs={7}>
-                                <Typography sx={{ color: 'var(--color-text-secondary)' }}>
-                                    Subtotal:
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={5} sx={{ textAlign: 'right' }}>
-                                <Typography sx={{ color: 'var(--color-text-secondary)' }}>
-                                    {currencySymbols[currency]}
-                                    {totals.subtotal}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={7}>
-                                <Typography sx={{ color: 'var(--color-text-secondary)' }}>
-                                    IVA (15%):
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={5} sx={{ textAlign: 'right' }}>
-                                <Typography sx={{ color: 'var(--color-text-secondary)' }}>
-                                    {currencySymbols[currency]}
-                                    {totals.tax}
-                                </Typography>
-                            </Grid>
                             <Grid item xs={12}>
                                 <Divider sx={{ my: 1 }} />
                             </Grid>

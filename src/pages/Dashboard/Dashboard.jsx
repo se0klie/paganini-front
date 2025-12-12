@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../shared components/Navbar';
 import '../../style.css';
 import { useEffect, useState } from 'react';
-
+import api from '../../axios';
 export default function Dashboard() {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0.00)
     async function fetchBalance() {
         try {
-            const response = await api.get(`/account/users/saldo?correo=${localStorage.getItem('correo')}`);
+            const response = await api.get(`/users/saldo?correo=${localStorage.getItem('correo')}`);
             setBalance(response.data.saldo)
         } catch (err) {
             console.error(err)
@@ -67,44 +67,6 @@ export default function Dashboard() {
                             </CardContent>
                         </Card>
                     </Grid>
-
-                    <Grid item xs={12} md={4}>
-                        <Card sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 3 }}>
-                            <CardContent>
-                                <Typography
-                                    variant="subtitle2"
-                                    sx={{ color: 'var(--color-text-muted)' }}
-                                >
-                                    Pagos recibidos
-                                </Typography>
-                                <Typography
-                                    variant="h5"
-                                    sx={{ color: 'var(--color-success)', fontWeight: 600 }}
-                                >
-                                    $12,340.75
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    <Grid item xs={12} md={4}>
-                        <Card sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 3 }}>
-                            <CardContent>
-                                <Typography
-                                    variant="subtitle2"
-                                    sx={{ color: 'var(--color-text-muted)' }}
-                                >
-                                    Pagos pendientes
-                                </Typography>
-                                <Typography
-                                    variant="h5"
-                                    sx={{ color: 'var(--color-warning)', fontWeight: 600 }}
-                                >
-                                    $2,150.00
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
                 </Grid>
 
                 <Divider sx={{ my: 5 }} />
@@ -136,23 +98,6 @@ export default function Dashboard() {
                     >
                         Nueva Factura
                     </Button>
-
-                    {/* <Button
-                        startIcon={<SubscriptionsIcon />}
-                        sx={{
-                            background: 'var(--color-primary)',
-                            color: 'white',
-                            px: 4,
-                            py: 1.5,
-                            fontWeight: 600,
-                            ':hover': {
-                                background: 'var(--color-primary-dark)',
-                            },
-                        }}
-                        onClick={() => navigate('/subscriptions')}
-                    >
-                        Mis Suscripciones
-                    </Button> */}
 
                     <Button
                         startIcon={<HistoryIcon />}
