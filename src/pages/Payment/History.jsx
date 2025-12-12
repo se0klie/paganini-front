@@ -120,7 +120,6 @@ const History = () => {
             handleCloseModal();
         } catch (err) {
             console.error('Error al solicitar el reembolso:', err);
-            // Aquí podrías mostrar un error al usuario en el modal
         }
     };
 
@@ -155,7 +154,6 @@ const History = () => {
                         px: { xs: 2, sm: 3, md: 4 },
                     }}
                 >
-                    {/* Header */}
                     <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
                         <IconButton
                             onClick={() => navigate(-1)}

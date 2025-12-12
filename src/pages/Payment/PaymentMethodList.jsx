@@ -1,7 +1,7 @@
 import { Box, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem } from "@mui/material"
-import api from "../../../axios";
 import { useState, useEffect } from "react";
 import { CiCircleRemove, CiCreditCard1, CiBank } from "react-icons/ci";
+import api from "../../axios";
 
 export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPaymentMethod }) {
     const [paymentType, setPaymentType] = useState('tarjeta'); // "tarjeta" | "cuentabanco"
@@ -86,10 +86,10 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
 
     };
 
-
     useEffect(() => {
         fetchCards();
     }, [])
+
     return (
         <Box
             sx={{
@@ -102,7 +102,6 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
                 gap: 2,
             }}
         >
-            {/* Header */}
             <Box>
                 <Box
                     sx={{

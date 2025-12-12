@@ -18,118 +18,49 @@ import {
     Fade,
 } from '@mui/material';
 import PaymentIcon from '@mui/icons-material/Payment';
-import AddCardIcon from '@mui/icons-material/AddCard';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
-// import api from '../../axios'; // TODO: Descomentar para conectar con backend
-// import { useAuth } from '../../context/AuthContext'; // TODO: Descomentar para obtener el email del usuario
-// Número máximo de tarjetas permitidas
-const MAX_CARDS = 10;
+import { useLocation, useNavigate } from 'react-router-dom';
+import PaymentMethodList from './PaymentMethodList';
+import api from '../../axios';
+import { ContactsOutlined } from '@mui/icons-material';
 
-const PaymentPage = () => {
-    // const { user } = useAuth(); // TODO: Descomentar para obtener el email del usuario
-    // Estado de tarjetas registradas
-    const [cards, setCards] = useState([]);
-
-    // ID de la tarjeta seleccionada para pagar
-    const [selectedCardId, setSelectedCardId] = useState(null);
-
-    // Estado del pago: null | 'loading' | 'success' | 'error'
+export function PaymentPage() {
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
     const [status, setStatus] = useState(null);
-
-    // Control de apertura del modal para agregar tarjeta
-    const [modalOpen, setModalOpen] = useState(false);
-
-    // Estado para el proceso de guardado de tarjeta
-    const [saving, setSaving] = useState(false);
-
-    // Datos de la nueva tarjeta a registrar
-    const [newCard, setNewCard] = useState({
-        label: '',
-        number: '',
-        expiration: '',
-        cvv: '',
-        nickname: '',
-    });
-
-    // Errores de validación para el formulario de tarjeta
-    const [errors, setErrors] = useState({});
+    const location = useLocation()
     const navigate = useNavigate();
-    // Validación básica de campos de tarjeta
-    const validateCard = () => {
-        const errs = {};
-        if (!newCard.label.trim()) errs.label = 'Nombre requerido';
-        if (!/^\d{16}$/.test(newCard.number)) errs.number = 'Número inválido (16 dígitos)';
-        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(newCard.expiration)) errs.expiration = 'Formato MM/AA';
-        if (!/^\d{3,4}$/.test(newCard.cvv)) errs.cvv = 'CVV inválido (3-4 dígitos)';
-        setErrors(errs);
-        return Object.keys(errs).length === 0;
-    };
 
-    // Abre el modal para agregar tarjeta
-    const handleAddCard = () => setModalOpen(true);
-    // Cierra el modal y limpia el formulario
-    const handleCloseModal = () => {
-        setModalOpen(false);
-        setNewCard({ label: '', number: '', expiration: '', cvv: '', nickname: '' });
-        setErrors({});
-    };
-
-    // Guarda la tarjeta si pasa validación y no supera el límite
-    const handleSaveCard = async () => {
-        if (!validateCard()) return;
-        if (cards.length >= MAX_CARDS) return;
-
-        setSaving(true);
-
-        // TODO: Lógica para conectar con el backend. Descomentar para usar.
-        /*
+    async function handlePay() {
+        const amount = location?.state?.amount;
+        const contactEmail = location?.state.receiver
         try {
-            const [mes, year] = newCard.expiration.split('/');
-            const payload = {
-                correo: user.email, // "jojusuar@espol.edu.ec",
-                tipo: 'tarjeta',
-                card: {
-                    numeroTarjeta: newCard.number,
-                    titular: newCard.label,
-                    mes: parseInt(mes, 10),
-                    year: parseInt(`20${year}`, 10),
-                    cvv: newCard.cvv,
-                    tipo: 'C', // "C" = crédito, "D" = débito. Esto debería ser un campo en el formulario.
-                    red: 'VISA', // Esto debería detectarse o ser un campo.
-                },
-            };
+            const response = await api.post('/transactions/payment-requests',
+                {
+                    "correoSolicitante": contactEmail,
+                    "monto": amount
+                }
+            )
 
-            // const response = await api.post('/payment-methods', payload);
-            // console.log('Respuesta del servidor:', response.data);
+            if (response.data.payload) {
+                const responseSend = await api.post('/api/transacciones/enviar/qr', {
+                    senderEmail: localStorage.getItem('correo'),
+                    qrPayload: response.data.payload,
+                    monto: amount
+                })
+                if (responseSend?.status === 200) {
+                    setStatus('success')
+                }
+            }
 
-        } catch (error) {
-            console.error('Error al guardar la tarjeta:', error);
-            // Aquí se podría mostrar un error al usuario.
-        } finally {
-            setSaving(false);
+            setTimeout(() => {
+                navigate('/')
+            }, 1500);
+
+        } catch (err) {
+            console.error('ERROR in payment: ', err)
+            setStatus('error')
+            return err
         }
-        */
-        setCards([...cards, { ...newCard, id: Date.now() }]);
-        setSaving(false); // Quitar si se usa el bloque try/catch/finally
-        handleCloseModal();
-    };
-
-    // Elimina una tarjeta y deselecciona si era la activa
-    const handleDeleteCard = (id) => {
-        setCards(cards.filter((card) => card.id !== id));
-        if (selectedCardId === id) setSelectedCardId(null);
-    };
-
-    // Simula el proceso de pago con random
-    const handlePay = () => {
-        if (!selectedCardId) return;
-        setStatus('loading');
-        setTimeout(() => {
-            const success = Math.random() > 0.3;
-            setStatus(success ? 'success' : 'error');
-        }, 2000);
     };
 
     return (
@@ -198,87 +129,8 @@ const PaymentPage = () => {
                         Tarjetas Registradas
                     </Typography>
 
-                    {cards.length === 0 && (
-                        <Box sx={{ textAlign: 'center', py: 6 }}>
-                            <Typography sx={{ color: 'var(--color-text-muted)' }}>
-                                No hay tarjetas registradas
-                            </Typography>
-                        </Box>
-                    )}
 
-                    <List sx={{ width: '100%' }}>
-                        {cards.map((card) => (
-                            <Fade in key={card.id}>
-                                <ListItem
-                                    button
-                                    selected={selectedCardId === card.id}
-                                    onClick={() => setSelectedCardId(card.id)}
-                                    sx={{
-                                        borderRadius: 2,
-                                        mb: 1,
-                                        px: 2,
-                                        py: 1.5,
-                                        transition: 'all 0.3s ease',
-                                        bgcolor: selectedCardId === card.id ? '#D0F0FD' : '#FFFFFF', // light blue if selected, white otherwise
-                                        color: selectedCardId === card.id ? '#0A2540' : '#1A1A1A', // dark text on light blue
-                                        boxShadow:
-                                            selectedCardId === card.id
-                                                ? '0 4px 12px rgba(0, 162, 255, 0.2)'
-                                                : 'none',
-                                        '&:hover': {
-                                            bgcolor:
-                                                selectedCardId === card.id ? '#A8E0FF' : '#F0F0F0', // slightly darker blue if selected, light gray on hover
-                                            cursor: 'pointer',
-                                        },
-                                    }}
-                                >
-                                    <ListItemText
-                                        primary={card.nickname || card.label}
-                                        secondary={`**** **** **** ${card.number.slice(-4)} • Exp: ${card.expiration}`}
-                                        primaryTypographyProps={{ fontWeight: 600 }}
-                                    />
-                                    <Chip
-                                        label="Tarjeta"
-                                        size="small"
-                                        sx={{
-                                            bgcolor: 'var(--color-primary)',
-                                            color: 'white',
-                                            mr: 1,
-                                        }}
-                                    />
-                                    <IconButton
-                                        onClick={() => handleDeleteCard(card.id)}
-                                        edge="end"
-                                    >
-                                        <DeleteIcon sx={{ color: 'var(--color-text-muted)' }} />
-                                    </IconButton>
-                                </ListItem>
-                            </Fade>
-                        ))}
-                    </List>
-
-                    {cards.length < MAX_CARDS && (
-                        <Button
-                            fullWidth
-                            sx={{
-                                mt: 3,
-                                borderRadius: 2,
-                                border: '2px solid var(--color-primary)',
-                                color: 'var(--color-primary)',
-                                backgroundColor: 'transparent',
-                                fontWeight: 600,
-                                px: 3,
-                                py: 1.5,
-                                '&:hover': {
-                                    backgroundColor: 'rgba(10, 37, 64, 0.15)', // soft, semi-transparent fill
-                                    color: 'var(--color-primary)', // keep text same color
-                                },
-                            }}
-                            onClick={handleAddCard}
-                        >
-                            Agregar tarjeta
-                        </Button>
-                    )}
+                    <PaymentMethodList selectedPaymentMethod={selectedPaymentMethod} setSelectedPaymentMethod={setSelectedPaymentMethod} />
 
                     <Divider sx={{ my: 4 }} />
 
@@ -286,7 +138,7 @@ const PaymentPage = () => {
                         variant="contained"
                         color="success"
                         fullWidth
-                        disabled={!selectedCardId}
+                        disabled={!selectedPaymentMethod}
                         startIcon={<PaymentIcon />}
                         sx={{
                             background: 'var(--secondary-accent)',
@@ -301,11 +153,13 @@ const PaymentPage = () => {
                                 opacity: 0.7,
                             },
                         }}
-                        onClick={handlePay}
+                        onClick={async () => { await handlePay() }}
                     >
                         Pagar
                     </Button>
+
                 </Box>
+
 
                 <Box
                     sx={{
@@ -320,7 +174,7 @@ const PaymentPage = () => {
                     }}
                 >
                     <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 3 }}>
-                        Estado del Pago
+                        Estado de transacción
                     </Typography>
 
                     <Box
@@ -367,88 +221,6 @@ const PaymentPage = () => {
                 </Box>
             </Box>
 
-            <Modal open={modalOpen} onClose={handleCloseModal}>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'var(--color-surface)',
-                        p: 5,
-                        borderRadius: 3,
-                        boxShadow: 'var(--shadow-lg)',
-                        width: { xs: '90%', sm: 400 },
-                    }}
-                >
-                    <Typography
-                        variant="h6"
-                        sx={{ mb: 3, fontWeight: 600, color: 'var(--color-primary)' }}
-                    >
-                        Agregar Tarjeta
-                    </Typography>
-                    <TextField
-                        fullWidth
-                        label="Nombre del titular"
-                        variant="outlined"
-                        sx={{ mb: 2 }}
-                        value={newCard.label}
-                        onChange={(e) => setNewCard({ ...newCard, label: e.target.value })}
-                        error={!!errors.label}
-                        helperText={errors.label}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Número (16 dígitos)"
-                        variant="outlined"
-                        sx={{ mb: 2 }}
-                        value={newCard.number}
-                        onChange={(e) => setNewCard({ ...newCard, number: e.target.value })}
-                        error={!!errors.number}
-                        helperText={errors.number}
-                    />
-                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                        <TextField
-                            fullWidth
-                            label="Fecha de expiración (MM/AA)"
-                            variant="outlined"
-                            value={newCard.expiration}
-                            onChange={(e) => setNewCard({ ...newCard, expiration: e.target.value })}
-                            error={!!errors.expiration}
-                            helperText={errors.expiration}
-                        />
-                        <TextField
-                            fullWidth
-                            label="CVV"
-                            variant="outlined"
-                            value={newCard.cvv}
-                            onChange={(e) => setNewCard({ ...newCard, cvv: e.target.value })}
-                            error={!!errors.cvv}
-                            helperText={errors.cvv}
-                        />
-                    </Box>
-                    <TextField
-                        fullWidth
-                        label="Apodo (opcional)"
-                        variant="outlined"
-                        sx={{ mb: 3 }}
-                        value={newCard.nickname}
-                        onChange={(e) => setNewCard({ ...newCard, nickname: e.target.value })}
-                        error={!!errors.nickname}
-                        helperText={errors.nickname}
-                    />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        startIcon={<AddCardIcon />}
-                        onClick={handleSaveCard}
-                        disabled={cards.length >= MAX_CARDS || saving}
-                    >
-                        Guardar Tarjeta
-                    </Button>
-                </Box>
-            </Modal>
         </Box>
     );
 };
