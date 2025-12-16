@@ -8,9 +8,15 @@ import Navbar from '../../shared components/Navbar';
 import '../../style.css';
 import { useEffect, useState } from 'react';
 import api from '../../axios';
+import { fetchContacts } from '../../helpers/contacts';
+import { RxAvatar } from "react-icons/rx";
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0.00)
+    const [contacts, setContacts] = useState([])
+    const [selectedContact, setSelectedContact] = useState('')
+
     async function fetchBalance() {
         try {
             const response = await api.get(`/users/saldo?correo=${localStorage.getItem('correo')}`);
@@ -23,8 +29,9 @@ export default function Dashboard() {
 
     useEffect(() => {
         fetchBalance()
+        fetchContacts(setContacts)
     }, [])
-    
+
     return (
         <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
             <Navbar />
@@ -64,6 +71,84 @@ export default function Dashboard() {
                                 >
                                     ${balance.toFixed(2)}
                                 </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid>
+                        <Card sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 3 }}>
+                            <CardContent sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 1
+                            }}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        gap: 2,
+                                    }}
+                                >
+                                    <Typography
+                                        variant="subtitle2"
+                                        sx={{
+                                            color: 'var(--color-text-muted)',
+                                            fontWeight: 500,
+                                        }}
+                                    >
+                                        Contactos frecuentes
+                                    </Typography>
+
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        sx={{
+                                            minWidth: 32,
+                                            height: 32,
+                                            borderRadius: 1,
+                                            backgroundColor: 'var(--color-primary)',
+                                            boxShadow: 'none',
+                                            '&:hover': {
+                                                backgroundColor: 'var(--color-primary-dark)',
+                                                boxShadow: 'none',
+                                            },
+                                        }}
+                                        // onClick={()=> navigate('/')}
+                                    >
+                                        +
+                                    </Button>
+                                </Box>
+
+                                {contacts.slice(0, 2).map((contact) => (
+                                    <Box
+                                        key={contact.correo}
+                                        sx={{
+                                            display: 'flex',
+                                            gap: 1,
+                                            p: 1,
+                                            alignItems: 'center',
+                                            borderRadius: 1,
+                                            cursor: 'pointer',
+                                            justifyContent: 'flex-start',
+                                            border: '2px solid #e0e6ed',
+                                            background:
+                                                selectedContact.correo === contact.correo ? '#edf1f5ff' : 'transparent',
+                                            ':hover': { background: '#edf1f5ff' }
+                                        }}
+                                        onClick={() => {
+                                            setSelectedContact(contact)
+                                            navigate('/invoice', {
+                                                state: {
+                                                    selectedContact
+                                                }
+                                            })
+                                        }}
+                                    >
+                                        <RxAvatar size={20} />
+                                        <Typography>{contact.nombre}</Typography>
+                                    </Box>
+
+                                ))}
                             </CardContent>
                         </Card>
                     </Grid>

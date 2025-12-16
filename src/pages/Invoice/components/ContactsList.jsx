@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { RxAvatar } from "react-icons/rx";
 import api from "../../../axios";
 import { ErrorModal, SuccessModal } from "../../../shared components/Modals";
+import { fetchContacts } from '../../../helpers/contacts'
 
-export default function ContactList({selectedContact, setSelectedContact}) {
+export default function ContactList({ selectedContact, setSelectedContact }) {
     const [contacts, setContacts] = useState([])
     const [openAddModal, setOpenAddModal] = useState(false)
     const [newContactData, setNewContactData] = useState({
@@ -15,20 +16,8 @@ export default function ContactList({selectedContact, setSelectedContact}) {
         message: ''
     });
 
-    async function fetchContacts() {
-        try {
-            const response = await api.get(`/users/${localStorage.getItem('correo')}/contacts`)
-            if (response.status === 200) {
-                setContacts(response.data)
-            }
-        } catch (err) {
-            console.error('GET CONTACTS error', err)
-            return err
-        }
-    }
-
     useEffect(() => {
-        fetchContacts();
+        fetchContacts(setContacts);
     }, [])
 
     async function handleAddContact() {
@@ -55,7 +44,7 @@ export default function ContactList({selectedContact, setSelectedContact}) {
     }
 
     return (
-        <Box sx={{ border: '1px solid var(--color-border)', borderRadius: 2, p: 2, boxShadow: 'var(--shadow-sm)'}}>
+        <Box sx={{ border: '1px solid var(--color-border)', borderRadius: 2, p: 2, boxShadow: 'var(--shadow-sm)' }}>
             <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                     <Typography sx={{ fontWeight: 600 }}>Lista de Contactos</Typography>
