@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Typography, Button, Tooltip, Stack, Select, MenuItem, Modal } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Navbar from '../../shared components/Navbar';
 import ContactList from './components/ContactsList';
@@ -9,7 +9,8 @@ import InvoicePreview from './components/InvoicePreview';
 import { ErrorModal } from '../../shared components/Modals';
 import api from '../../axios';
 export default function Invoice() {
-    const [selectedContact, setSelectedContact] = useState('')
+    const location = useLocation()
+    const [selectedContact, setSelectedContact] = useState(location?.state?.selectedContact || '')
     const [amount, setAmount] = useState(0) //dollar
     const [currency, setCurrency] = useState('USD');
     const navigate = useNavigate();
