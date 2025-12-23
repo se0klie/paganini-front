@@ -186,23 +186,6 @@ export default function Dashboard() {
                     </Button>
 
                     <Button
-                        startIcon={<AccountBalanceWalletIcon />}
-                        sx={{
-                            background: 'var(--color-primary)',
-                            color: 'white',
-                            px: 4,
-                            py: 1.5,
-                            fontWeight: 600,
-                            ':hover': {
-                                background: 'var(--color-primary-dark)',
-                            },
-                        }}
-                        onClick={() => navigate('/wallet')}
-                    >
-                        Wallet
-                    </Button>
-
-                    <Button
                         startIcon={<HistoryIcon />}
                         sx={{
                             background: '#0369A1',
