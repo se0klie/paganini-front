@@ -23,45 +23,88 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PaymentMethodList from './PaymentMethodList';
 import api from '../../axios';
 import { ContactsOutlined } from '@mui/icons-material';
+import AddCardIcon from '@mui/icons-material/AddCard';
 
 export function PaymentPage() {
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
     const [status, setStatus] = useState(null);
-    const location = useLocation()
+    const [loading, setLoading] = useState(false);
+    const location = useLocation();
     const navigate = useNavigate();
 
+    const isRecharge = location.state?.type === 'recharge';
+    const amount = location?.state?.amount;
+
     async function handlePay() {
-        const amount = location?.state?.amount;
-        const contactEmail = location?.state.receiver
+        const contactEmail = location?.state.receiver;
+        setLoading(true);
+        setStatus('loading');
         try {
             const response = await api.post('/transactions/payment-requests',
                 {
                     "correoSolicitante": contactEmail,
                     "monto": amount
                 }
-            )
+            );
 
             if (response.data.payload) {
                 const responseSend = await api.post('/api/transacciones/enviar/qr', {
                     senderEmail: localStorage.getItem('correo'),
                     qrPayload: response.data.payload,
                     monto: amount
-                })
+                });
                 if (responseSend?.status === 200) {
-                    setStatus('success')
+                    setStatus('success');
                 }
             }
 
             setTimeout(() => {
-                navigate('/')
+                navigate('/');
             }, 1500);
 
         } catch (err) {
-            console.error('ERROR in payment: ', err)
-            setStatus('error')
-            return err
+            console.error('ERROR in payment: ', err);
+            setStatus('error');
+        } finally {
+            setLoading(false);
         }
     };
+
+    async function handleRecharge() {
+        if (!selectedPaymentMethod) return;
+
+        setLoading(true);
+        setStatus('loading');
+
+        try {
+            const payload = {
+                email: localStorage.getItem('correo'),
+                metodoPagoId: selectedPaymentMethod.id,
+                monto: amount,
+            };
+
+            const response = await api.post('/api/transacciones/recarga', payload);
+
+            if (response.status === 200 || response.status === 201) {
+                setStatus('success');
+                setTimeout(() => {
+                    navigate('/invoice');
+                }, 1500);
+            } else {
+                setStatus('error');
+            }
+        } catch (err) {
+            console.error('ERROR in recharge: ', err);
+            setStatus('error');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const mainAction = isRecharge ? handleRecharge : handlePay;
+    const buttonText = isRecharge ? 'Confirmar Recarga' : 'Pagar';
+    const buttonIcon = isRecharge ? <AddCardIcon /> : <PaymentIcon />;
+
 
     return (
         <Box sx={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
@@ -126,7 +169,7 @@ export function PaymentPage() {
                             width: '100%',
                         }}
                     >
-                        Tarjetas Registradas
+                        Métodos de Pago Guardados
                     </Typography>
 
 
@@ -136,12 +179,12 @@ export function PaymentPage() {
 
                     <Button
                         variant="contained"
-                        color="success"
+                        color={isRecharge ? "primary" : "success"}
                         fullWidth
-                        disabled={!selectedPaymentMethod}
-                        startIcon={<PaymentIcon />}
+                        disabled={!selectedPaymentMethod || loading}
+                        startIcon={buttonIcon}
                         sx={{
-                            background: 'var(--secondary-accent)',
+                            background: isRecharge ? 'var(--color-primary)' : 'var(--secondary-accent)',
                             borderRadius: 2,
                             px: 3,
                             py: 1.5,
@@ -152,10 +195,13 @@ export function PaymentPage() {
                                 cursor: 'not-allowed',
                                 opacity: 0.7,
                             },
+                             ':hover': {
+                                background: isRecharge ? 'var(--color-primary-dark)' : '',
+                            }
                         }}
-                        onClick={async () => { await handlePay() }}
+                        onClick={mainAction}
                     >
-                        Pagar
+                        {buttonText}
                     </Button>
 
                 </Box>
@@ -174,7 +220,7 @@ export function PaymentPage() {
                     }}
                 >
                     <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 3 }}>
-                        Estado de transacción
+                        Estado de la transacción
                     </Typography>
 
                     <Box
@@ -190,7 +236,7 @@ export function PaymentPage() {
                             <>
                                 <CircularProgress color="primary" />
                                 <Typography sx={{ mt: 2, color: 'white' }}>
-                                    Procesando pago...
+                                    Procesando...
                                 </Typography>
                             </>
                         )}
@@ -198,14 +244,14 @@ export function PaymentPage() {
                         {status === 'success' && (
                             <Box>
                                 <Typography sx={{ fontSize: 64, mb: 2 }}>😃</Typography>
-                                <Alert severity="success">Pago realizado con éxito</Alert>
+                                <Alert severity="success">{isRecharge ? 'Recarga realizada con éxito' : 'Pago realizado con éxito'}</Alert>
                             </Box>
                         )}
 
                         {status === 'error' && (
                             <Box>
                                 <Typography sx={{ fontSize: 64, mb: 2 }}>😞</Typography>
-                                <Alert severity="error">Hubo un error al procesar el pago</Alert>
+                                <Alert severity="error">Hubo un error al procesar la transacción</Alert>
                             </Box>
                         )}
 

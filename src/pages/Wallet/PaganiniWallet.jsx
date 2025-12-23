@@ -40,8 +40,6 @@ const PaganiniWallet = ({ isWithdraw = false }) => {
     const handleRecharge = () => {
         const amount = parseFloat(rechargeAmount);
         if (isNaN(amount) || amount <= 0) return;
-
-        setBalance(prev => prev + amount);
         
         setOpenRecharge(false);
         setRechargeAmount('');
