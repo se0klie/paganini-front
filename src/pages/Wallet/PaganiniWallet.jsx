@@ -6,21 +6,11 @@ import {
     Card,
     CardContent,
     Grid,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Chip,
-    IconButton,
     Dialog,
     DialogTitle,
     DialogContent,
     DialogActions,
     TextField,
-    Alert,
     InputAdornment
 } from '@mui/material';
 import AddCardIcon from '@mui/icons-material/AddCard';
@@ -31,21 +21,11 @@ import api from '../../axios';
 const PaganiniWallet = ({ isWithdraw = false }) => {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0.00);
-    const [transactions, setTransactions] = useState([]); // Wallet specific history
-    const [loading, setLoading] = useState(true);
     const [openRecharge, setOpenRecharge] = useState(false);
     const [rechargeAmount, setRechargeAmount] = useState('');
 
-    // Mock data for wallet history
-    const mockWalletTransactions = [
-        { id: 101, fecha: '2023-10-27', descripcion: 'Recarga de Saldo', monto: 50.00, type: 'credit' },
-        { id: 102, fecha: '2023-10-26', descripcion: 'Pago de Factura #1234', monto: -25.00, type: 'debit' },
-        { id: 103, fecha: '2023-10-25', descripcion: 'Recarga de Saldo', monto: 100.00, type: 'credit' },
-    ];
-
     useEffect(() => {
         fetchBalance();
-        fetchHistory();
     }, []);
 
     const fetchBalance = async () => {
@@ -57,35 +37,15 @@ const PaganiniWallet = ({ isWithdraw = false }) => {
         }
     };
 
-    const fetchHistory = async () => {
-        setLoading(true);
-        // Simulated API call
-        setTimeout(() => {
-            setTransactions(mockWalletTransactions);
-            setLoading(false);
-        }, 500);
-    };
-
     const handleRecharge = () => {
-        // Here we would call the API to recharge
         const amount = parseFloat(rechargeAmount);
         if (isNaN(amount) || amount <= 0) return;
 
-        // Mock update
         setBalance(prev => prev + amount);
-        const newTransaction = {
-            id: Date.now(),
-            fecha: new Date().toISOString().split('T')[0],
-            descripcion: 'Recarga de Saldo',
-            monto: amount,
-            type: 'credit'
-        };
-        setTransactions([newTransaction, ...transactions]);
         
         setOpenRecharge(false);
         setRechargeAmount('');
         
-        // Redirect to payment page
         navigate('/payment', { 
             state: { 
                 amount: amount,
@@ -143,48 +103,6 @@ const PaganiniWallet = ({ isWithdraw = false }) => {
                     </Card>
                 </Grid>
             </Grid>
-
-            {/* History Section */}
-            <Typography variant="h6" sx={{ mb: 2, color: 'var(--color-primary)', fontWeight: 600 }}>
-                Historial de Wallet
-            </Typography>
-            
-            <TableContainer component={Paper} sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 2 }}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ backgroundColor: 'var(--color-surface)' }}>
-                            <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Descripción</TableCell>
-                            <TableCell align="right" sx={{ fontWeight: 600 }}>Monto</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {loading ? (
-                            <TableRow>
-                                <TableCell colSpan={3} align="center">Cargando...</TableCell>
-                            </TableRow>
-                        ) : (
-                            transactions.map((row) => (
-                                <TableRow key={row.id} hover>
-                                    <TableCell>{new Date(row.fecha).toLocaleDateString()}</TableCell>
-                                    <TableCell>{row.descripcion}</TableCell>
-                                    <TableCell align="right">
-                                        <Typography 
-                                            sx={{ 
-                                                fontWeight: 600, 
-                                                color: row.type === 'credit' ? 'success.main' : 'error.main' 
-                                            }}
-                                        >
-                                            {row.type === 'credit' ? '+' : ''}
-                                            ${Math.abs(row.monto).toFixed(2)}
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
 
             {/* Recharge/Withdraw Modal */}
             <Dialog open={openRecharge} onClose={() => setOpenRecharge(false)}>
