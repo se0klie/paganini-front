@@ -3,6 +3,7 @@ import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import HistoryIcon from '@mui/icons-material/History';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../shared components/Navbar';
 import '../../style.css';
@@ -182,6 +183,23 @@ export default function Dashboard() {
                         onClick={() => navigate('/invoice')}
                     >
                         Nueva Factura
+                    </Button>
+
+                    <Button
+                        startIcon={<AccountBalanceWalletIcon />}
+                        sx={{
+                            background: 'var(--color-primary)',
+                            color: 'white',
+                            px: 4,
+                            py: 1.5,
+                            fontWeight: 600,
+                            ':hover': {
+                                background: 'var(--color-primary-dark)',
+                            },
+                        }}
+                        onClick={() => navigate('/wallet')}
+                    >
+                        Wallet
                     </Button>
 
                     <Button

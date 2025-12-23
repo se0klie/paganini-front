@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Grid, Typography, Button, Tooltip, Stack, Select, MenuItem, Modal } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import Navbar from '../../shared components/Navbar';
 import ContactList from './components/ContactsList';
 import TransactionSide from './components/TransactionSide';
@@ -38,7 +39,7 @@ export default function Invoice() {
                     py: 4,
                 }}
             >
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <Button
                         startIcon={<ArrowBackIcon />}
                         sx={{
@@ -50,6 +51,20 @@ export default function Invoice() {
                         onClick={() => navigate('/')}
                     >
                         Volver
+                    </Button>
+
+                    <Button
+                        startIcon={<AccountBalanceWalletIcon />}
+                        sx={{
+                            color: 'var(--color-primary)',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            border: '1px solid var(--color-primary)',
+                            ':hover': { backgroundColor: 'rgba(10,37,64,0.1)' },
+                        }}
+                        onClick={() => navigate('/wallet')}
+                    >
+                        Paganini Wallet
                     </Button>
                 </Box>
 

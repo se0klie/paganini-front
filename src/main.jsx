@@ -13,6 +13,7 @@ import Invoice from './pages/Invoice/Invoice.jsx';
 import Payment from './pages/Payment/Payment.jsx';
 import Subscriptions from './pages/Subscriptions/Subscriptions.jsx';
 import History from './pages/Payment/History.jsx';
+import PaganiniWallet from './pages/Wallet/PaganiniWallet.jsx';
 import { PublicRoute } from './router/PublicRoute.jsx';
 import AccountMainPage from './pages/Account/AccountMain.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -66,6 +67,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <ProtectedRoute>
                                 <Invoice />
                             </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/wallet"
+                        element={
+                            <PublicRoute>
+                                <PaganiniWallet />
+                            </PublicRoute>
                         }
                     />
                     <Route
