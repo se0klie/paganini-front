@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { CiCircleRemove, CiCreditCard1, CiBank } from "react-icons/ci";
 import api from "../../axios";
 
-export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPaymentMethod }) {
+export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPaymentMethod, allowedPM }) {
     const [paymentType, setPaymentType] = useState('tarjeta'); // "tarjeta" | "cuentabanco"
     const [paymentMethods, setPaymentMethods] = useState({
         tarjeta: [],
@@ -32,6 +32,7 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
         try {
             const response = await api.get(`/payment-methods/by-user?correo=${localStorage.getItem('correo')}`)
             setPaymentMethods(response.data);
+            console.log(response.data)
         } catch (err) {
             console.error('Error fetching payment methods:', err);
             return err
@@ -135,7 +136,53 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
-                {paymentMethods?.tarjeta?.length > 0 ? (
+                {paymentMethods?.cuentabanco?.length > 0 && (allowedPM === 'bank' || allowedPM === '') ? (
+                    paymentMethods.cuentabanco.map((cuenta) => (
+                        <Box
+                            key={cuenta.id}
+                            sx={{
+                                p: 1.5,
+                                border: '1px solid var(--color-border)',
+                                borderRadius: 2,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                transition: '0.2s ease',
+                                backgroundColor: cuenta.id === selectedPaymentMethod.id ? 'var(--color-border)' : 'var(--color-surface)',
+                                '&:hover': { backgroundColor: 'var(--color-border)' },
+                            }}
+                            onClick={() => setSelectedPaymentMethod(cuenta)}
+                        >
+                            <Box>
+                                <Typography sx={{ fontWeight: 600 }}>
+                                    {cuenta.nombreBanco}
+                                </Typography>
+
+                                <Typography sx={{ color: 'gray', fontSize: '0.9rem' }}>
+                                    {cuenta.tipoCuenta} · ****
+                                    {cuenta.numeroCuenta.slice(-4)}
+                                </Typography>
+
+                                <Typography sx={{ color: 'gray', fontSize: '0.85rem' }}>
+                                    Titular: {cuenta.titular}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    ))
+                ) : (
+                    allowedPM !== 'bank' ? (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No puedes pagar con cuentas bancarias en esta transacción
+                        </Typography>
+                    ) : (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No tienes cuentas bancarias registradas
+                        </Typography>
+                    )
+                )}
+
+
+                {paymentMethods?.tarjeta?.length > 0 && (allowedPM === 'card' || allowedPM === '') ? (
                     paymentMethods.tarjeta.map((card, index) => {
                         const clean = String(card.numeroTarjeta).replace(/\s/g, '');
                         const masked =
@@ -191,12 +238,18 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
                         );
                     })
                 ) : (
-                    <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
-                        No tienes tarjetas registradas
-                    </Typography>
+                    allowedPM !== 'card' ? (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No puedes pagar con tarjetas en esta transacción
+                        </Typography>
+                    ) : (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No tienes tarjetas registradas
+                        </Typography>
+                    )
                 )}
 
-                {paymentMethods?.ewallet?.length > 0 ? (
+                {paymentMethods?.ewallet?.length > 0 && (allowedPM === 'ewallet' || allowedPM === '') ? (
                     paymentMethods.ewallet.map((wallet, index) => (
                         <Box
                             key={`wallet-${index}`}
@@ -222,9 +275,15 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
                         </Box>
                     ))
                 ) : (
-                    <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
-                        No tienes billeteras digitales registradas
-                    </Typography>
+                    allowedPM !== 'card' ? (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No puedes pagar con billeteras digitales en esta transacción
+                        </Typography>
+                    ) : (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No tienes billeteras digitales registradas
+                        </Typography>
+                    )
                 )}
             </Box>
 

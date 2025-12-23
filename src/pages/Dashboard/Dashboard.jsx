@@ -182,7 +182,7 @@ export default function Dashboard() {
                         }}
                         onClick={() => navigate('/invoice')}
                     >
-                        Nueva Factura
+                        Nueva transacción
                     </Button>
 
                     <Button

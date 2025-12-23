@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Grid,
@@ -31,10 +31,40 @@ export function PaymentPage() {
     const [loading, setLoading] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-
+    const allowedPM = location.state?.type === 'recharge' ? 'card' : location.state?.type === 'withdraw' ? 'bank' : '';
     const isRecharge = location.state?.type === 'recharge';
+    const isWithdraw = location.state?.type === 'withdraw';
     const amount = location?.state?.amount;
 
+    async function handleWithdraw() {
+        try {
+            if (!selectedPaymentMethod) return;
+
+            setLoading(true);
+            setStatus('loading');
+
+            const payload = {
+                email: localStorage.getItem('correo'),
+                metodoPagoId: selectedPaymentMethod.id,
+                monto: amount,
+            };
+
+            const response = await api.post('/api/transacciones/retiro', payload);
+            console.log(response)
+            if (response?.status === 200 || response?.status === 201) {
+                setStatus('success');
+                setTimeout(() => {
+                    navigate('/invoice');
+                }, 1500);
+            } else {
+                setStatus('error');
+            }
+        } catch (err) {
+            console.error('ERROR in withdraw: ', err);
+            setStatus('error');
+            return err
+        }
+    }
     async function handlePay() {
         const contactEmail = location?.state.receiver;
         setLoading(true);
@@ -101,8 +131,8 @@ export function PaymentPage() {
         }
     }
 
-    const mainAction = isRecharge ? handleRecharge : handlePay;
-    const buttonText = isRecharge ? 'Confirmar Recarga' : 'Pagar';
+    const mainAction = isRecharge ? handleRecharge : isWithdraw ? handleWithdraw : handlePay;
+    const buttonText = isRecharge ? 'Confirmar Recarga' : isWithdraw ? 'Confirmar retiro' : 'Pagar';
     const buttonIcon = isRecharge ? <AddCardIcon /> : <PaymentIcon />;
 
 
@@ -173,7 +203,7 @@ export function PaymentPage() {
                     </Typography>
 
 
-                    <PaymentMethodList selectedPaymentMethod={selectedPaymentMethod} setSelectedPaymentMethod={setSelectedPaymentMethod} />
+                    <PaymentMethodList selectedPaymentMethod={selectedPaymentMethod} setSelectedPaymentMethod={setSelectedPaymentMethod} allowedPM={allowedPM}/>
 
                     <Divider sx={{ my: 4 }} />
 
@@ -195,7 +225,7 @@ export function PaymentPage() {
                                 cursor: 'not-allowed',
                                 opacity: 0.7,
                             },
-                             ':hover': {
+                            ':hover': {
                                 background: isRecharge ? 'var(--color-primary-dark)' : '',
                             }
                         }}

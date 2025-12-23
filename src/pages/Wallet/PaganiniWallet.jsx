@@ -40,34 +40,39 @@ const PaganiniWallet = ({ isWithdraw = false }) => {
     const handleRecharge = () => {
         const amount = parseFloat(rechargeAmount);
         if (isNaN(amount) || amount <= 0) return;
-        
+
         setOpenRecharge(false);
         setRechargeAmount('');
-        
-        navigate('/payment', { 
-            state: { 
+
+        navigate('/payment', {
+            state: {
                 amount: amount,
                 type: 'recharge'
-            } 
+            }
         });
     };
-    
-    // const handleWithdraw = () => {
-    //     // To be implemented...
-    //     const amount = parseFloat(rechargeAmount);
-    //     if (isNaN(amount) || amount <= 0) return;
-    //     console.log("Withdraw amount:", amount)
-    //     setOpenRecharge(false);
-    //     setRechargeAmount('');
-    // };
+
+    const handleWithdraw = () => {
+        const amount = parseFloat(rechargeAmount);
+        if (isNaN(amount) || amount <= 0) return;
+
+        setOpenRecharge(false);
+        setRechargeAmount('');
+
+        navigate('/payment', {
+            state: {
+                amount: amount,
+                type: 'withdraw'
+            }
+        });
+    };
 
     return (
         <Box sx={{ p: 4, maxWidth: '1000px', mx: 'auto' }}>
-            {/* Balance Card */}
             <Grid container spacing={3} sx={{ mb: 4, justifyContent: 'center' }}>
                 <Grid item xs={12} md={6}>
-                    <Card sx={{ 
-                        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--secondary-accent) 100%)', 
+                    <Card sx={{
+                        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--secondary-accent) 100%)',
                         color: 'white',
                         borderRadius: 3,
                         boxShadow: 'var(--shadow-lg)'
@@ -82,11 +87,11 @@ const PaganiniWallet = ({ isWithdraw = false }) => {
                             <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
                                 ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </Typography>
-                            <Button 
-                                variant="contained" 
+                            <Button
+                                variant="contained"
                                 startIcon={<AddCardIcon />}
-                                sx={{ 
-                                    backgroundColor: 'rgba(255,255,255,0.2)', 
+                                sx={{
+                                    backgroundColor: 'rgba(255,255,255,0.2)',
                                     backdropFilter: 'blur(10px)',
                                     color: 'white',
                                     fontWeight: 600,
@@ -134,11 +139,11 @@ const PaganiniWallet = ({ isWithdraw = false }) => {
                 </DialogContent>
                 <DialogActions sx={{ p: 2 }}>
                     <Button onClick={() => setOpenRecharge(false)} color="inherit">Cancelar</Button>
-                    <Button 
-                        onClick={isWithdraw ? () => {} /* handleWithdraw */ : handleRecharge} 
+                    <Button
+                        onClick={isWithdraw ? handleWithdraw : handleRecharge}
                         variant="contained"
                         disabled={!rechargeAmount || parseFloat(rechargeAmount) <= 0}
-                        sx={{ 
+                        sx={{
                             background: 'var(--color-primary)',
                             ':hover': { background: 'var(--color-primary-dark)' }
                         }}
