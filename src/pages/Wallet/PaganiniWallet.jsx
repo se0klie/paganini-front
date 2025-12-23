@@ -23,14 +23,12 @@ import {
     Alert,
     InputAdornment
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../shared components/Navbar';
 import api from '../../axios';
 
-const PaganiniWallet = () => {
+const PaganiniWallet = ({ isWithdraw = false }) => {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0.00);
     const [transactions, setTransactions] = useState([]); // Wallet specific history
@@ -86,135 +84,121 @@ const PaganiniWallet = () => {
         
         setOpenRecharge(false);
         setRechargeAmount('');
-        // setSuccessOpen(true); // Removed as requested
         
         // Redirect to payment page
         navigate('/payment', { 
             state: { 
                 amount: amount,
-                type: 'recharge' // Optional: to let Payment page know context if needed
+                type: 'recharge'
             } 
         });
     };
+    
+    // const handleWithdraw = () => {
+    //     // To be implemented...
+    //     const amount = parseFloat(rechargeAmount);
+    //     if (isNaN(amount) || amount <= 0) return;
+    //     console.log("Withdraw amount:", amount)
+    //     setOpenRecharge(false);
+    //     setRechargeAmount('');
+    // };
 
     return (
-        <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
-            <Navbar />
-            
-            <Box sx={{ p: 4, maxWidth: '1000px', mx: 'auto' }}>
-                {/* Header & Back Button */}
-                <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Button
-                        startIcon={<ArrowBackIcon />}
-                        sx={{
-                            color: 'var(--color-primary)',
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            ':hover': { backgroundColor: 'rgba(10,37,64,0.1)' },
-                        }}
-                        onClick={() => navigate('/invoice')}
-                    >
-                        Volver a Factura
-                    </Button>
-                    <Typography variant="h5" sx={{ color: 'var(--color-primary)', fontWeight: 700 }}>
-                        Paganini Wallet
-                    </Typography>
-                    <Box sx={{ width: 100 }} />
-                </Box>
-
-                {/* Balance Card */}
-                <Grid container spacing={3} sx={{ mb: 4, justifyContent: 'center' }}>
-                    <Grid item xs={12} md={6}>
-                        <Card sx={{ 
-                            background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--secondary-accent) 100%)', 
-                            color: 'white',
-                            borderRadius: 3,
-                            boxShadow: 'var(--shadow-lg)'
-                        }}>
-                            <CardContent sx={{ p: 4 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                                    <AccountBalanceWalletIcon sx={{ fontSize: 30, opacity: 0.9 }} />
-                                    <Typography variant="subtitle1" sx={{ opacity: 0.9, fontWeight: 500 }}>
-                                        Saldo Disponible
-                                    </Typography>
-                                </Box>
-                                <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
-                                    ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <Box sx={{ p: 4, maxWidth: '1000px', mx: 'auto' }}>
+            {/* Balance Card */}
+            <Grid container spacing={3} sx={{ mb: 4, justifyContent: 'center' }}>
+                <Grid item xs={12} md={6}>
+                    <Card sx={{ 
+                        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--secondary-accent) 100%)', 
+                        color: 'white',
+                        borderRadius: 3,
+                        boxShadow: 'var(--shadow-lg)'
+                    }}>
+                        <CardContent sx={{ p: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                                <AccountBalanceWalletIcon sx={{ fontSize: 30, opacity: 0.9 }} />
+                                <Typography variant="subtitle1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                                    Saldo Disponible
                                 </Typography>
-                                <Button 
-                                    variant="contained" 
-                                    startIcon={<AddCardIcon />}
-                                    sx={{ 
-                                        backgroundColor: 'rgba(255,255,255,0.2)', 
-                                        backdropFilter: 'blur(10px)',
-                                        color: 'white',
-                                        fontWeight: 600,
-                                        boxShadow: 'none',
-                                        ':hover': { backgroundColor: 'rgba(255,255,255,0.3)' }
-                                    }}
-                                    onClick={() => setOpenRecharge(true)}
-                                >
-                                    Recargar Saldo
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                            </Box>
+                            <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
+                                ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </Typography>
+                            <Button 
+                                variant="contained" 
+                                startIcon={<AddCardIcon />}
+                                sx={{ 
+                                    backgroundColor: 'rgba(255,255,255,0.2)', 
+                                    backdropFilter: 'blur(10px)',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    boxShadow: 'none',
+                                    ':hover': { backgroundColor: 'rgba(255,255,255,0.3)' }
+                                }}
+                                onClick={() => setOpenRecharge(true)}
+                            >
+                                {isWithdraw ? 'Retirar Saldo' : 'Recargar Saldo'}
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </Grid>
+            </Grid>
 
-                {/* History Section */}
-                <Typography variant="h6" sx={{ mb: 2, color: 'var(--color-primary)', fontWeight: 600 }}>
-                    Historial de Wallet
-                </Typography>
-                
-                <TableContainer component={Paper} sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 2 }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow sx={{ backgroundColor: 'var(--color-surface)' }}>
-                                <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>Descripción</TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 600 }}>Monto</TableCell>
+            {/* History Section */}
+            <Typography variant="h6" sx={{ mb: 2, color: 'var(--color-primary)', fontWeight: 600 }}>
+                Historial de Wallet
+            </Typography>
+            
+            <TableContainer component={Paper} sx={{ boxShadow: 'var(--shadow-md)', borderRadius: 2 }}>
+                <Table>
+                    <TableHead>
+                        <TableRow sx={{ backgroundColor: 'var(--color-surface)' }}>
+                            <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Descripción</TableCell>
+                            <TableCell align="right" sx={{ fontWeight: 600 }}>Monto</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={3} align="center">Cargando...</TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {loading ? (
-                                <TableRow>
-                                    <TableCell colSpan={3} align="center">Cargando...</TableCell>
+                        ) : (
+                            transactions.map((row) => (
+                                <TableRow key={row.id} hover>
+                                    <TableCell>{new Date(row.fecha).toLocaleDateString()}</TableCell>
+                                    <TableCell>{row.descripcion}</TableCell>
+                                    <TableCell align="right">
+                                        <Typography 
+                                            sx={{ 
+                                                fontWeight: 600, 
+                                                color: row.type === 'credit' ? 'success.main' : 'error.main' 
+                                            }}
+                                        >
+                                            {row.type === 'credit' ? '+' : ''}
+                                            ${Math.abs(row.monto).toFixed(2)}
+                                        </Typography>
+                                    </TableCell>
                                 </TableRow>
-                            ) : (
-                                transactions.map((row) => (
-                                    <TableRow key={row.id} hover>
-                                        <TableCell>{new Date(row.fecha).toLocaleDateString()}</TableCell>
-                                        <TableCell>{row.descripcion}</TableCell>
-                                        <TableCell align="right">
-                                            <Typography 
-                                                sx={{ 
-                                                    fontWeight: 600, 
-                                                    color: row.type === 'credit' ? 'success.main' : 'error.main' 
-                                                }}
-                                            >
-                                                {row.type === 'credit' ? '+' : ''}
-                                                ${Math.abs(row.monto).toFixed(2)}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            {/* Recharge Modal */}
+            {/* Recharge/Withdraw Modal */}
             <Dialog open={openRecharge} onClose={() => setOpenRecharge(false)}>
-                <DialogTitle sx={{ fontWeight: 600, color: 'var(--color-primary)' }}>Recargar Billetera</DialogTitle>
+                <DialogTitle sx={{ fontWeight: 600, color: 'var(--color-primary)' }}>
+                    {isWithdraw ? 'Retirar de la Billetera' : 'Recargar Billetera'}
+                </DialogTitle>
                 <DialogContent>
                     <Box sx={{ border: '1px solid var(--color-border)', borderRadius: 2, p: 2, mt: 1, boxShadow: 'var(--shadow-sm)' }}>
                         <Box sx={{ mb: 2 }}>
                             <Typography variant="subtitle1" fontWeight="600">
-                                Monto a recargar (en dólares)
+                                {isWithdraw ? 'Monto a retirar (en dólares)' : 'Monto a recargar (en dólares)'}
                             </Typography>
                             <Typography sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
-                                Ingresa el monto a recargar
+                                {isWithdraw ? 'Ingresa el monto a retirar' : 'Ingresa el monto a recargar'}
                             </Typography>
                         </Box>
                         <TextField
@@ -235,7 +219,7 @@ const PaganiniWallet = () => {
                 <DialogActions sx={{ p: 2 }}>
                     <Button onClick={() => setOpenRecharge(false)} color="inherit">Cancelar</Button>
                     <Button 
-                        onClick={handleRecharge} 
+                        onClick={isWithdraw ? () => {} /* handleWithdraw */ : handleRecharge} 
                         variant="contained"
                         disabled={!rechargeAmount || parseFloat(rechargeAmount) <= 0}
                         sx={{ 
@@ -243,7 +227,7 @@ const PaganiniWallet = () => {
                             ':hover': { background: 'var(--color-primary-dark)' }
                         }}
                     >
-                        Confirmar Recarga
+                        {isWithdraw ? 'Confirmar Retiro' : 'Confirmar Recarga'}
                     </Button>
                 </DialogActions>
             </Dialog>
