@@ -1,42 +1,36 @@
 import React, { useState } from 'react';
-import { Box, Grid, Typography, Button, Tooltip } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Grid, Typography, Button, Tooltip, Stack, Select, MenuItem } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PaymentType from './components/PaymentType';
+import Navbar from '../../shared components/Navbar';
+import ContactList from './components/ContactsList';
+import TransactionSide from './components/TransactionSide';
 import InvoicePreview from './components/InvoicePreview';
-import ProductSelection from './components/ProductSelection';
+import { ErrorModal } from '../../shared components/Modals';
+import api from '../../axios';
+import SegmentedControl from '../../shared components/SegmentedControl';
+import PaganiniWallet from '../Wallet/PaganiniWallet';
 
-export default function Invoice() {
-    const [selectedInstallments, setSelectedInstallments] = useState('cash');
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [selectedCurrency, setSelectedCurrency] = useState('USD');
+const TransferView = () => {
+    const location = useLocation();
     const navigate = useNavigate();
-    return (
-        <Box
-            sx={{
-                backgroundColor: 'var(--color-bg)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                px: { xs: 2, sm: 3, md: 4 },
-                py: 4,
-            }}
-        >
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
-                <Button
-                    startIcon={<ArrowBackIcon />}
-                    sx={{
-                        color: 'var(--color-primary)',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        ':hover': { backgroundColor: 'rgba(10,37,64,0.1)' },
-                    }}
-                    onClick={() => navigate('/')} // go back in history
-                >
-                    Volver
-                </Button>
-            </Box>
+    const [selectedContact, setSelectedContact] = useState(location?.state?.selectedContact || '');
+    const [amount, setAmount] = useState(0); //dollar
+    const [currency, setCurrency] = useState('USD');
+    const [openModal, setOpenModal] = useState(false);
 
+    async function fetchBalance() {
+        try {
+            const response = await api.get(`/users/saldo?correo=${localStorage.getItem('correo')}`);
+            return response.data.saldo;
+        } catch (err) {
+            console.error(err);
+            return err;
+        }
+    }
+
+    return (
+        <>
             <Typography
                 variant="h4"
                 sx={{
@@ -46,43 +40,57 @@ export default function Invoice() {
                     textAlign: 'center',
                 }}
             >
-                Generar Factura
+                Nueva transacción
             </Typography>
 
             <Box
                 sx={{
-                    width: '100%',
                     display: 'flex',
+                    width: '100%',
                     gap: 3,
-                    flexWrap: 'wrap',
                 }}
             >
-                <Box>
-                    <PaymentType onInstallmentChange={setSelectedInstallments} />
+                <Box
+                    sx={{
+                        flex: '1 1 50%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 3,
+                    }}
+                >
+                    <ContactList selectedContact={selectedContact} setSelectedContact={setSelectedContact} />
+                    <TransactionSide amount={amount} setAmount={setAmount} />
                 </Box>
 
                 <Box
                     sx={{
-                        flex: { xs: '0 0 100%', md: '1 1 50%' },
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 5,
+                        flex: '1 1 50%',
                     }}
                 >
-                    <Box sx={{ width: '100%' }}>
-                        <ProductSelection
-                            onProductsChange={setSelectedProducts}
-                            onCurrencyChange={setSelectedCurrency}
-                        />
-                    </Box>
-
-                    <Box sx={{ width: '100%' }}>
-                        <InvoicePreview
-                            installments={selectedInstallments}
-                            products={selectedProducts}
-                            currency={selectedCurrency}
-                        />
-                    </Box>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ mb: 4 }}
+                    >
+                        <Typography
+                            variant="h5"
+                            sx={{ color: 'var(--color-primary)', fontWeight: 700 }}
+                        >
+                            Productos
+                        </Typography>
+                        <Select
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                            size="small"
+                            sx={{ minWidth: 100 }}
+                        >
+                            <MenuItem value="USD">USD ($)</MenuItem>
+                            <MenuItem value="EUR">EUR (€)</MenuItem>
+                            <MenuItem value="MXN">MXN (MX$)</MenuItem>
+                        </Select>
+                    </Stack>
+                    <InvoicePreview customer={selectedContact} currency={currency} amount={amount} />
                 </Box>
             </Box>
 
@@ -96,13 +104,12 @@ export default function Invoice() {
             >
                 <Tooltip
                     title={
-                        selectedProducts.length === 0
-                            ? 'Debe seleccionar al menos un producto'
-                            : !selectedInstallments
-                              ? 'Debe seleccionar un método de pago o cuotas'
-                              : ''
+                        amount === 0
+                            ? 'Debe ingresar un monto mayor a 0'
+                            : !selectedContact
+                            ? 'Debe seleccionar un contacto a transferir'
+                            : ''
                     }
-                    disableHoverListener={!(selectedProducts.length === 0 || !selectedInstallments)}
                 >
                     <span>
                         <Button
@@ -121,13 +128,87 @@ export default function Invoice() {
                                     cursor: 'not-allowed',
                                 },
                             }}
-                            onClick={() => navigate('/payment')}
-                            disabled={selectedProducts.length === 0 || !selectedInstallments}
+                            onClick={async () => {
+                                const balance = await fetchBalance();
+                                if (balance < amount) {
+                                    setOpenModal(true);
+                                } else {
+                                    navigate('/payment', {
+                                        state: {
+                                            amount,
+                                            receiver: selectedContact?.correo,
+                                        },
+                                    });
+                                }
+                            }}
+                            disabled={!selectedContact || amount <= 0}
                         >
                             Proceder al pago
                         </Button>
                     </span>
                 </Tooltip>
+            </Box>
+            <ErrorModal open={openModal} onClose={() => setOpenModal(false)} message="Saldo insuficiente para la transacción" />
+        </>
+    );
+};
+
+export default function Invoice() {
+    const navigate = useNavigate();
+    const [activeView, setActiveView] = useState('transfer'); // 'transfer', 'recharge', 'withdraw'
+
+    const viewOptions = [
+        { label: 'Transferir', value: 'transfer' },
+        { label: 'Recargar', value: 'recharge' },
+        { label: 'Retirar', value: 'withdraw' },
+    ];
+
+    const renderContent = () => {
+        switch (activeView) {
+            case 'transfer':
+                return <TransferView />;
+            case 'recharge':
+                return <PaganiniWallet isWithdraw={false} />;
+            case 'withdraw':
+                return <PaganiniWallet isWithdraw={true} />;
+            default:
+                return <TransferView />;
+        }
+    };
+
+    return (
+        <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
+            <Navbar />
+            <Box
+                sx={{
+                    backgroundColor: 'var(--color-bg)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    px: { xs: 2, sm: 3, md: 4 },
+                    py: 4,
+                }}
+            >
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Button
+                        startIcon={<ArrowBackIcon />}
+                        sx={{
+                            color: 'var(--color-primary)',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            ':hover': { backgroundColor: 'rgba(10,37,64,0.1)' },
+                        }}
+                        onClick={() => navigate('/')}
+                    >
+                        Volver
+                    </Button>
+
+                    <SegmentedControl options={viewOptions} selected={activeView} onSelect={setActiveView} />
+
+                    <Box sx={{ width: '88px' }} /> 
+                </Box>
+
+                {renderContent()}
             </Box>
         </Box>
     );

@@ -13,6 +13,8 @@ import Invoice from './pages/Invoice/Invoice.jsx';
 import Payment from './pages/Payment/Payment.jsx';
 import Subscriptions from './pages/Subscriptions/Subscriptions.jsx';
 import Contacts from './pages/Contacts/Contacts.jsx';
+import History from './pages/Payment/History.jsx';
+import PaganiniWallet from './pages/Wallet/PaganiniWallet.jsx';
 import { PublicRoute } from './router/PublicRoute.jsx';
 import AccountMainPage from './pages/Account/AccountMain.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -28,20 +30,19 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             </PublicRoute>
                         }
                     />
-
-                    <Route
-                        path="/account"
-                        element={
-                            <PublicRoute>
-                                <AccountMainPage />
-                            </PublicRoute>
-                        }
-                    />
                     <Route
                         path="/"
                         element={
                             <ProtectedRoute>
                                 <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/account"
+                        element={
+                            <ProtectedRoute>
+                                <AccountMainPage />
                             </ProtectedRoute>
                         }
                     />
@@ -70,6 +71,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                         }
                     />
                     <Route
+                        path="/wallet"
+                        element={
+                            <PublicRoute>
+                                <PaganiniWallet />
+                            </PublicRoute>
+                        }
+                    />
+                    <Route
                         path="/payment"
                         element={
                             <ProtectedRoute>
@@ -90,6 +99,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                         element={
                             <ProtectedRoute>
                                 <Contacts />
+                        path="/history"
+                        element={
+                            <ProtectedRoute>
+                                <History />
                             </ProtectedRoute>
                         }
                     />

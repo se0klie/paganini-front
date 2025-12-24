@@ -1,9 +1,15 @@
-import { Box, Typography, Button, Dialog, DialogContent, DialogActions, DialogTitle, TextField, MenuItem } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem } from "@mui/material"
+import { useState, useEffect } from "react";
 import { CiCircleRemove, CiCreditCard1, CiBank } from "react-icons/ci";
-import api from '../../axios'
-export default function PaymentMethodTab() {
+import api from "../../axios";
+
+export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPaymentMethod, allowedPM }) {
     const [paymentType, setPaymentType] = useState('tarjeta'); // "tarjeta" | "cuentabanco"
+    const [paymentMethods, setPaymentMethods] = useState({
+        tarjeta: [],
+        cuentabanco: [],
+        ewallet: []
+    });
     const [newPaymentData, setNewPaymentData] = useState({
         // tarjeta
         numeroTarjeta: "",
@@ -20,22 +26,13 @@ export default function PaymentMethodTab() {
         tipoCuenta: "", // Ahorro | Corriente
         identificacion: "",
     });
-
-    const [paymentMethods, setPaymentMethods] = useState({
-        tarjeta: [],
-        cuentabanco: [],
-        ewallet: []
-    });
-    const [openRemovePM, setOpenRemovePM] = useState(false)
     const [openAddCard, setOpenAddCard] = useState(false)
-    const [selectedCardId, setSelectedCardId] = useState(-1);
-   
 
     async function fetchCards() {
         try {
             const response = await api.get(`/payment-methods/by-user?correo=${localStorage.getItem('correo')}`)
             setPaymentMethods(response.data);
-            console.log('Payment methods fetched:', response.data);
+            console.log(response.data)
         } catch (err) {
             console.error('Error fetching payment methods:', err);
             return err
@@ -90,191 +87,205 @@ export default function PaymentMethodTab() {
 
     };
 
-    async function handleRemovePM() {
-        try {
-            const response = await api.delete(`/payment-methods/${selectedCardId}`);
-            console.log('Payment method removed:', response.data);
-            fetchCards();
-            setOpenRemovePM(false);
-        } catch (err) {
-            console.error('Error removing payment method:', err);
-            return err
-        }
-    }
     useEffect(() => {
-        fetchCards()
+        fetchCards();
     }, [])
 
     return (
-        <Box sx={{ gap: 4, display: 'flex', flexDirection: 'column' }}>
-            <Box
-                sx={{
-                    backgroundColor: 'var(--color-bg)',
-                    height: 'max-content',
-                    p: 2,
-                    borderRadius: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2
-                }}
-            >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography sx={{ fontWeight: 'bold' }}>
-                        Métodos de pago
+        <Box
+            sx={{
+                border: '1px solid var(--color-border)',
+                borderRadius: 2,
+                p: 2,
+                boxShadow: 'var(--shadow-sm)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+            }}
+        >
+            <Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mb: 1,
+                    }}
+                >
+                    <Typography sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+                        Método de pago
                     </Typography>
-                    <Button sx={{ border: '1px solid blue', px: 5 }} onClick={() => setOpenAddCard(true)}>Añadir</Button>
+
+                    <Button
+                        sx={{
+                            background: 'var(--color-secondary)',
+                            color: 'white',
+                            px: 2,
+                            ':hover': { background: 'var(--color-primary)' },
+                        }}
+                        onClick={() => setOpenAddCard(true)}
+                    >
+                        Añadir
+                    </Button>
                 </Box>
 
-                {paymentMethods.cuentabanco.map((cuenta, index) => (
-                    <Box
-                        key={index}
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            p: 2.2,
-                            border: '1px solid var(--color-secondary)',
-                            borderRadius: 2,
-                            mb: 2,
-                            transition: '0.2s ease',
-                            '&:hover': { backgroundColor: 'var(--color-border)' },
-                        }}
-                    >
+                <Typography sx={{ color: 'gray' }}>
+                    Selecciona el método de pago a usar
+                </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+                {paymentMethods?.cuentabanco?.length > 0 && (allowedPM === 'bank' || allowedPM === '') ? (
+                    paymentMethods.cuentabanco.map((cuenta) => (
                         <Box
+                            key={cuenta.id}
                             sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 2.5,
-                                flex: 1,
-                            }}
-                        >
-                            <CiBank size={24} style={{ opacity: 0.8 }} />
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography sx={{ fontWeight: 600 }}>
-                                    {cuenta.nombreBanco}
-                                </Typography>
-                                <Typography sx={{ color: 'gray', fontSize: '0.9rem' }}>
-                                    {cuenta.numeroCuenta}
-                                </Typography>
-                            </Box>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box
-                                sx={{
-                                    backgroundColor: 'var(--color-secondary)',
-                                    color: 'white',
-                                    px: 1.5,
-                                    py: 0.5,
-                                    borderRadius: 1,
-                                    fontSize: '0.85rem',
-                                    fontWeight: 600,
-                                    textTransform: 'capitalize',
-                                }}
-                            >
-                                {cuenta.tipoCuenta}
-                            </Box>
-
-                            <CiCircleRemove
-                                size={26}
-                                style={{ color: 'red', cursor: 'pointer' }}
-                                onClick={() => {
-                                    setSelectedCardId(cuenta.id);
-                                    setOpenRemovePM(true);
-                                }}
-                            />
-                        </Box>
-                    </Box>
-                ))}
-
-                {paymentMethods?.tarjeta.map((card, index) => {
-                    const clean = String(card.numeroTarjeta).replace(/\s/g, '');
-                    const masked = clean.length > 4 ? `**** **** **** ${clean.slice(-4)}` : clean;
-
-                    return (
-                        <Box
-                            key={index}
-                            sx={{
+                                p: 1.5,
+                                border: '1px solid var(--color-border)',
+                                borderRadius: 2,
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                p: 2.2,
-                                border: '1px solid var(--color-secondary)',
+                                transition: '0.2s ease',
+                                backgroundColor: cuenta.id === selectedPaymentMethod.id ? 'var(--color-border)' : 'var(--color-surface)',
+                                '&:hover': { backgroundColor: 'var(--color-border)' },
+                            }}
+                            onClick={() => setSelectedPaymentMethod(cuenta)}
+                        >
+                            <Box>
+                                <Typography sx={{ fontWeight: 600 }}>
+                                    {cuenta.nombreBanco}
+                                </Typography>
+
+                                <Typography sx={{ color: 'gray', fontSize: '0.9rem' }}>
+                                    {cuenta.tipoCuenta} · ****
+                                    {cuenta.numeroCuenta.slice(-4)}
+                                </Typography>
+
+                                <Typography sx={{ color: 'gray', fontSize: '0.85rem' }}>
+                                    Titular: {cuenta.titular}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    ))
+                ) : (
+                    allowedPM !== 'bank' ? (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No puedes pagar con cuentas bancarias en esta transacción
+                        </Typography>
+                    ) : (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No tienes cuentas bancarias registradas
+                        </Typography>
+                    )
+                )}
+
+
+                {paymentMethods?.tarjeta?.length > 0 && (allowedPM === 'card' || allowedPM === '') ? (
+                    paymentMethods.tarjeta.map((card, index) => {
+                        const clean = String(card.numeroTarjeta).replace(/\s/g, '');
+                        const masked =
+                            clean.length > 4
+                                ? `**** **** **** ${clean.slice(-4)}`
+                                : clean;
+
+                        return (
+                            <Box
+                                key={index}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    p: 2,
+                                    border: '1px solid var(--color-secondary)',
+                                    borderRadius: 2,
+                                    transition: '0.2s ease',
+                                    backgroundColor: card.id === selectedPaymentMethod.id ? 'var(--color-border)' : 'var(--color-surface)'
+                                }}
+                                onClick={() => setSelectedPaymentMethod(card)}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+                                    <CiCreditCard1 size={26} style={{ opacity: 0.8 }} />
+
+                                    <Box>
+                                        <Typography sx={{ fontWeight: 600 }}>{masked}</Typography>
+                                        <Typography
+                                            sx={{ color: 'gray', fontSize: '0.9rem' }}
+                                        >
+                                            {card.titular}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <Box
+                                        sx={{
+                                            backgroundColor: 'var(--color-secondary)',
+                                            color: 'white',
+                                            px: 1.5,
+                                            py: 0.4,
+                                            borderRadius: 1,
+                                            fontSize: '0.85rem',
+                                            fontWeight: 600,
+                                        }}
+                                    >
+                                        Exp: {card.mes}/{card.year}
+                                    </Box>
+
+                                </Box>
+                            </Box>
+                        );
+                    })
+                ) : (
+                    allowedPM !== 'card' ? (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No puedes pagar con tarjetas en esta transacción
+                        </Typography>
+                    ) : (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No tienes tarjetas registradas
+                        </Typography>
+                    )
+                )}
+
+                {paymentMethods?.ewallet?.length > 0 && (allowedPM === 'ewallet' || allowedPM === '') ? (
+                    paymentMethods.ewallet.map((wallet, index) => (
+                        <Box
+                            key={`wallet-${index}`}
+                            sx={{
+                                p: 1.5,
+                                border: '1px solid var(--color-border)',
                                 borderRadius: 2,
-                                mb: 2,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
                                 transition: '0.2s ease',
                                 '&:hover': { backgroundColor: 'var(--color-border)' },
                             }}
                         >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 2.5,
-                                    flex: 1,
-                                }}
-                            >
-                                <CiCreditCard1 size={24} style={{ opacity: 0.8 }} />
-
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Typography sx={{ fontWeight: 600 }}>{masked}</Typography>
-                                    <Typography sx={{ color: 'gray', fontSize: '0.9rem' }}>
-                                        {card.titular}
-                                    </Typography>
-                                </Box>
-                            </Box>
-
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <Box
-                                    sx={{
-                                        backgroundColor: 'var(--color-secondary)',
-                                        color: 'white',
-                                        px: 1.5,
-                                        py: 0.4,
-                                        borderRadius: 1,
-                                        fontSize: '0.85rem',
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    Exp: {card.mes}/{card.year}
-                                </Box>
-
-                                <CiCircleRemove
-                                    size={26}
-                                    style={{ color: 'red', cursor: 'pointer' }}
-                                    onClick={() => {
-                                        setSelectedCardId(card.id);
-                                        setOpenRemovePM(true);
-                                    }}
-                                />
+                            <Box>
+                                <Typography sx={{ fontWeight: 600 }}>
+                                    {wallet.provider}
+                                </Typography>
+                                <Typography sx={{ color: 'gray', fontSize: '0.9rem' }}>
+                                    {wallet.email}
+                                </Typography>
                             </Box>
                         </Box>
-                    );
-                })}
-
-                {paymentMethods?.ewallet.map((wallet, index) => (
-                    <Box key={`wallet-${index}`}>
-                        {wallet.provider} - {wallet.email}
-                    </Box>
-                ))}
-
+                    ))
+                ) : (
+                    allowedPM !== 'card' ? (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No puedes pagar con billeteras digitales en esta transacción
+                        </Typography>
+                    ) : (
+                        <Typography sx={{ color: 'gray', fontSize: '0.9rem', ml: 1 }}>
+                            No tienes billeteras digitales registradas
+                        </Typography>
+                    )
+                )}
             </Box>
-            <Dialog open={openRemovePM} onClose={() => setOpenRemovePM(false)} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{ fontWeight: 'bold' }}>Eliminar método de pago</DialogTitle>
-                <DialogContent>
-                    <Typography>
-                        ¿Estás seguro de que deseas eliminar este método de pago?
-                    </Typography>
-                </DialogContent>
-                <DialogActions sx={{ p: 2 }}>
-                    <Button onClick={() => setOpenRemovePM(false)} variant="outlined">Cancelar</Button>
-                    <Button onClick={() => {
-                        handleRemovePM();
-                    }} variant="contained" color="error">
-                        Confirmar
-                    </Button>
-                </DialogActions>
-            </Dialog>
 
             <Dialog open={openAddCard} onClose={() => setOpenAddCard(false)} maxWidth="xs" fullWidth>
                 <DialogTitle sx={{ fontWeight: 'bold' }}>Añadir método de pago</DialogTitle>
@@ -470,7 +481,7 @@ export default function PaymentMethodTab() {
                     </Button>
                 </DialogActions>
             </Dialog>
+        </Box>
 
-        </Box >
     )
 }

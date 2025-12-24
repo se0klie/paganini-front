@@ -2,23 +2,24 @@ import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActi
 import { GenericInputField, PasswordField } from "../../shared components/Inputs"
 import { useEffect, useState } from "react";
 import { ErrorModal, SuccessModal } from "../../shared components/Modals";
+import api from "../../axios";
 export default function AccountInfoTab() {
     const fields = [
-        { label: 'Nombre', type: 'text', placeholder: 'Ej. Juan', var_name: 'nombre' },
-        { label: 'Apellido', type: 'text', placeholder: 'Ej. Pérez', var_name: 'apellido' },
-        { label: 'Correo electrónico', type: 'email', placeholder: 'Ej. correo@correo.com', var_name: 'email' },
-        { label: 'Teléfono', type: 'tel', placeholder: 'Ej. +593 9 1234 5678', var_name: 'telefono' },
+        { label: 'Nombres', type: 'text', placeholder: 'Ej. Juan', var_name: 'nombre' },
+        { label: 'Apellidos', type: 'text', placeholder: 'Ej. Pérez', var_name: 'apellido' },
+        { label: 'Correo electrónico', type: 'email', placeholder: 'Ej. correo@correo.com', var_name: 'correo' },
+        { label: 'Teléfono', type: 'tel', placeholder: 'Ej. 09 1234 5678', var_name: 'telefono' },
         { label: 'País', type: 'text', placeholder: 'Ej. Ecuador', var_name: 'pais' },
         { label: 'Ciudad', type: 'text', placeholder: 'Ej. Guayaquil', var_name: 'ciudad' },
     ]
 
     const [form, setForm] = useState({
-        nombre: 'Hailie Diana',
-        apellido: 'Jimenez Martinez',
-        email: 'hajimart@yahoo.com',
-        telefono: '+593 333 333 3333',
-        pais: 'Ecuador',
-        ciudad: 'Guayaquil'
+        nombre: '',
+        apellido: '',
+        correo: '',
+        telefono: '',
+        pais: '',
+        ciudad: ''
     });
     const [newData, setNewData] = useState(form)
     const [passwordForm, setPasswordForm] = useState({
@@ -38,6 +39,26 @@ export default function AccountInfoTab() {
     const [open2FAModal, setOpen2FAModal] = useState(false)
     const [tab, setTab] = useState(0);
 
+    async function fetchUserData() {
+        try {
+            const response = await api.get(`/users?correo=${localStorage.getItem('correo')}`);
+            delete response.data.codigoQr
+            delete response.data.saldo
+            setForm(response.data);
+            setNewData(response.data);
+        } catch (err) {
+            console.error("Error fetching user data:", err);
+            return err
+        }
+    }
+
+    useEffect(() => {
+        fetchUserData();
+    }, [])
+
+    useEffect(()=> {
+        console.log(form)
+    }, [form])
     const handlePasswordChange = (field, value) => {
         setPasswordForm(prev => ({
             ...prev,
@@ -174,6 +195,7 @@ export default function AccountInfoTab() {
                     <Button onClick={() => {
                         setForm(newData)
                         setEditUserInfo(false)
+                        setEditingMode(false)
                         setSuccessModal(true)
                     }} variant="contained" color="primary">
                         Confirmar
