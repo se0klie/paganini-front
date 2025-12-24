@@ -1,5 +1,7 @@
 import { Box, Typography, Button, Stack, Grid, Card, CardContent, Divider } from '@mui/material';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import ContactsIcon from '@mui/icons-material/Contacts';
+import { useEffect } from 'react';
 import HistoryIcon from '@mui/icons-material/History';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -185,6 +187,36 @@ export default function Dashboard() {
                         Nueva transacción
                     </Button>
 
+                            <Button
+                                startIcon={<ContactsIcon />}
+                                sx={{
+                                    background: 'var(--color-primary)',
+                                    color: 'white',
+                                    px: 4,
+                                    py: 1.5,
+                                    fontWeight: 600,
+                                    ':hover': {
+                                        background: 'var(--color-primary-dark)',
+                                    },
+                                }}
+                                onClick={() => navigate('/contacts')}
+                            >
+                                Mis Contactos
+                            </Button>
+
+                            <Button
+                                sx={{
+                                    color: 'white',
+                                    px: 4,
+                                    py: 1.5,
+                                    fontWeight: 600,
+                                    ':hover': { background: '#0369A1' },
+                                }}
+                                disabled={true}
+                                onClick={() => navigate('/transactions')}
+                            >
+                                Transacciones
+                            </Button>
                     <Button
                         startIcon={<HistoryIcon />}
                         sx={{

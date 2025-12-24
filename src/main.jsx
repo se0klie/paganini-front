@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Invoice from './pages/Invoice/Invoice.jsx';
 import Payment from './pages/Payment/Payment.jsx';
 import Subscriptions from './pages/Subscriptions/Subscriptions.jsx';
+import Contacts from './pages/Contacts/Contacts.jsx';
 import History from './pages/Payment/History.jsx';
 import PaganiniWallet from './pages/Wallet/PaganiniWallet.jsx';
 import { PublicRoute } from './router/PublicRoute.jsx';
@@ -94,6 +95,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                         }
                     />
                     <Route
+                        path="/contacts"
+                        element={
+                            <ProtectedRoute>
+                                <Contacts />
                         path="/history"
                         element={
                             <ProtectedRoute>
