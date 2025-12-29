@@ -24,7 +24,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { contactsService } from '../../services/contactsService';
-
+import Navbar from '../../shared components/Navbar';
 export default function Contacts() {
   const navigate = useNavigate();
 
@@ -126,7 +126,10 @@ export default function Contacts() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', py: 4 }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
+      <Box sx={{ position: 'sticky', top: 0, zIndex: 1100, marginBottom: 3}}>
+        <Navbar />
+      </Box>
       <Container maxWidth="lg">
         <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconButton

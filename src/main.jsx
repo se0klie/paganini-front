@@ -95,14 +95,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                         }
                     />
                     <Route
-                        path="/contacts"
-                        element={
-                            <ProtectedRoute>
-                                <Contacts />
                         path="/history"
                         element={
                             <ProtectedRoute>
                                 <History />
+                            </ProtectedRoute>
+                        }
+                    />
+                     <Route
+                        path="/contacts"
+                        element={
+                            <ProtectedRoute>
+                                <Contacts />
                             </ProtectedRoute>
                         }
                     />
