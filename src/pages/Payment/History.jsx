@@ -19,40 +19,13 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    Pagination
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import Navbar from '../../shared components/Navbar';
-// import api from '../../axios'; // TODO: Descomentar cuando se conecte con el backend real
-
-// Datos de ejemplo para las transacciones
-const mockTransactions = [
-    {
-        id: 1,
-        fecha: '2023-10-26',
-        beneficiario: 'Amazon',
-        descripcion: 'Compra de libros',
-        monto: -75.5,
-        status: 'default', // 'default', 'pending', 'refunded'
-    },
-    {
-        id: 2,
-        fecha: '2023-10-25',
-        beneficiario: 'Netflix',
-        descripcion: 'Suscripción mensual',
-        monto: -15.0,
-        status: 'refunded',
-    },
-    {
-        id: 3,
-        fecha: '2023-10-24',
-        beneficiario: 'Starbucks',
-        descripcion: 'Café y pastel',
-        monto: -8.75,
-        status: 'pending',
-    },
-];
+import api from '../../axios'
 
 const History = () => {
     const navigate = useNavigate();
@@ -62,27 +35,110 @@ const History = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [refundReason, setRefundReason] = useState('');
+    const [filter, setFilter] = useState('all');
+    const [page, setPage] = useState(1);
+    const rowsPerPage = 5;
+
+    const filteredTransactions =
+        filter === 'all'
+            ? transactions
+            : transactions.filter(t => t.tipo === filter);
+
+    const groupByDate = (txs) => {
+        return txs.reduce((acc, tx) => {
+            const dateKey = new Date(tx.fecha).toLocaleDateString('es-ES');
+            acc[dateKey] = acc[dateKey] || [];
+            acc[dateKey].push(tx);
+            return acc;
+        }, {});
+    };
+
+    const groupedTransactions = groupByDate(filteredTransactions);
+
+
+    const paginatedDates = Object.keys(groupedTransactions).slice(
+        (page - 1) * rowsPerPage,
+        page * rowsPerPage
+    );
 
     useEffect(() => {
         fetchTransactions();
     }, []);
 
+    const buildTransactions = (data) => {
+        const envios = data.envios.map((e, index) => ({
+            id: `envio-${index}`,
+            tipo: 'envio',
+            fecha: e.fecha ?? new Date(),
+            beneficiario: `${e.receptorNombre} ${e.receptorApellido}`,
+            descripcion: `📤 Envío a ${e.receptorCorreo}`,
+            monto: -e.monto,
+        }));
+
+        const recibos = data.recibos.map((r, index) => ({
+            id: `recibo-${index}`,
+            tipo: 'recibo',
+            fecha: r.fecha ?? new Date(),
+            beneficiario: `${r.emisorNombre} ${r.emisorApellido}`,
+            descripcion: `📥 Recibo de ${r.emisorCorreo}`,
+            monto: r.monto,
+        }));
+
+        const recargas = data.recargas.map((r, index) => ({
+            id: `recarga-${index}`,
+            tipo: 'recarga',
+            fecha: r.fecha ?? new Date(),
+            beneficiario: r.titular,
+            descripcion: `💳 Recarga ${r.red}`,
+            monto: r.monto,
+        }));
+
+        const retiros = data.retiros.map((r, index) => ({
+            id: `retiro-${index}`,
+            tipo: 'retiro',
+            fecha: r.fecha ?? new Date(),
+            beneficiario: r.titular,
+            descripcion: `🏦 Retiro a ${r.nombreBanco}`,
+            monto: -r.monto,
+        }));
+
+        return [...envios, ...recibos, ...recargas, ...retiros]
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    };
+
     const fetchTransactions = async () => {
         try {
             setLoading(true);
             setError(null);
-            // TODO: Reemplazar con el endpoint real del backend cuando esté disponible
-            // const response = await api.get('/api/transactions');
-            // setTransactions(response.data);
 
-            // Usando datos de ejemplo mientras no hay backend
-            setTransactions(mockTransactions);
+            const response = await api.get(`/api/transacciones/historial?correo=${localStorage.getItem('correo')}`);
+            if (response.status === 200) {
+                setTransactions((buildTransactions(response.data)))
+            }
             setLoading(false);
         } catch (err) {
             console.error('Error al cargar el historial de transacciones:', err);
             setError('No se pudo cargar el historial. Inténtalo de nuevo más tarde.');
             setLoading(false);
         }
+    };
+
+    const calculateIncomeOutcome = (transactions) => {
+        let income = 0;
+        let outcome = 0;
+
+        transactions.forEach(tx => {
+            if (tx.monto >= 0) {
+                income += tx.monto;
+            } else {
+                outcome += Math.abs(tx.monto); // absolute value for the chart
+            }
+        });
+
+        return [
+            { label: 'Ingresos', value: income },
+            { label: 'Gastos', value: outcome },
+        ];
     };
 
     const handleOpenModal = (transaction) => {
@@ -94,48 +150,6 @@ const History = () => {
         setModalOpen(false);
         setSelectedTransaction(null);
         setRefundReason('');
-    };
-
-    const handleRequestRefund = async () => {
-        if (!selectedTransaction || !refundReason.trim()) return;
-
-        try {
-            // Lógica para enviar la solicitud de reembolso al backend
-            // TODO: Reemplazar con el endpoint real del backend
-            // await api.post(`/api/transactions/${selectedTransaction.id}/refund`, {
-            //   reason: refundReason,
-            // });
-
-            console.log(
-                `Reembolso solicitado para la transacción ${selectedTransaction.id} por el motivo: "${refundReason}"`
-            );
-
-            // Actualizar el estado de la transacción a 'pending' en la UI
-            setTransactions(
-                transactions.map((t) =>
-                    t.id === selectedTransaction.id ? { ...t, status: 'pending' } : t
-                )
-            );
-
-            handleCloseModal();
-        } catch (err) {
-            console.error('Error al solicitar el reembolso:', err);
-        }
-    };
-
-    const getButtonInfo = (transaction) => {
-        switch (transaction.status) {
-            case 'pending':
-                return { text: 'Pendiente', disabled: true };
-            case 'refunded':
-                return { text: 'Reembolsado', disabled: true };
-            default:
-                return {
-                    text: 'Solicitar Reembolso',
-                    disabled: false,
-                    onClick: () => handleOpenModal(transaction),
-                };
-        }
     };
 
     return (
@@ -179,7 +193,14 @@ const History = () => {
 
                     {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-                    {/* Tabla de Transacciones */}
+                    <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
+                        <Button onClick={() => setFilter('all')}>Todos</Button>
+                        <Button onClick={() => setFilter('envio')}>Envíos</Button>
+                        <Button onClick={() => setFilter('recibo')}>Recibos</Button>
+                        <Button onClick={() => setFilter('recarga')}>Recargas</Button>
+                        <Button onClick={() => setFilter('retiro')}>Retiros</Button>
+                    </Box>
+
                     <TableContainer
                         component={Paper}
                         sx={{
@@ -199,72 +220,52 @@ const History = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {loading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
-                                            <CircularProgress />
-                                            <Typography sx={{ mt: 2, color: 'var(--color-text-muted)' }}>Cargando transacciones...</Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                ) : transactions.length === 0 && !error ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
-                                            <Typography sx={{ color: 'var(--color-text-muted)' }}>No se encontraron transacciones.</Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    transactions.map((transaction) => {
-                                        const buttonInfo = getButtonInfo(transaction);
-                                        return (
-                                            <TableRow
-                                                key={transaction.id}
-                                                sx={{
-                                                    '&:nth-of-type(odd)': { backgroundColor: 'var(--color-surface)' },
-                                                    '&:hover': { backgroundColor: 'var(--color-border)' },
-                                                }}
-                                            >
-                                                <TableCell>{new Date(transaction.fecha).toLocaleDateString('es-ES')}</TableCell>
+                                {paginatedDates.map((date) => (
+                                    <React.Fragment key={date}>
+
+                                        {/* Header de fecha */}
+                                        <TableRow>
+                                            <TableCell colSpan={4} sx={{ fontWeight: 700, background: '#f5f5f5' }}>
+                                                {date}
+                                            </TableCell>
+                                        </TableRow>
+
+                                        {/* Transacciones del día */}
+                                        {groupedTransactions[date].map((transaction) => (
+                                            <TableRow key={transaction.id}>
+                                                <TableCell />
                                                 <TableCell>{transaction.beneficiario}</TableCell>
                                                 <TableCell>{transaction.descripcion}</TableCell>
                                                 <TableCell align="right">
                                                     <Chip
-                                                        label={transaction.monto.toLocaleString('es-ES', { style: 'currency', currency: 'USD' })}
+                                                        label={transaction.monto.toLocaleString('es-ES', {
+                                                            style: 'currency',
+                                                            currency: 'USD',
+                                                        })}
                                                         sx={{
                                                             fontWeight: 600,
                                                             color: 'white',
-                                                            backgroundColor: transaction.monto < 0 ? 'var(--color-error)' : 'var(--secondary-accent)',
+                                                            backgroundColor:
+                                                                transaction.monto < 0
+                                                                    ? 'var(--color-error)'
+                                                                    : 'var(--secondary-accent)',
                                                         }}
                                                     />
                                                 </TableCell>
-                                                {/* <TableCell align="center">
-                                                    <Button
-                                                        variant="contained"
-                                                        size="small"
-                                                        disabled={buttonInfo.disabled}
-                                                        onClick={buttonInfo.onClick}
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            boxShadow: 'none',
-                                                            backgroundColor: buttonInfo.disabled ? 'var(--button-prev-action)' : 'var(--color-secondary)',
-                                                            '&:hover': {
-                                                                backgroundColor: buttonInfo.disabled ? '' : 'var(--color-secondary-dark)',
-                                                            },
-                                                            '&.Mui-disabled': {
-                                                                color: 'white',
-                                                                backgroundColor: 'var(--button-prev-action)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        {buttonInfo.text}
-                                                    </Button>
-                                                </TableCell> */}
                                             </TableRow>
-                                        );
-                                    })
-                                )}
+                                        ))}
+                                    </React.Fragment>
+                                ))}
                             </TableBody>
+
                         </Table>
                     </TableContainer>
+                    <Pagination
+                        count={Math.ceil(Object.keys(groupedTransactions).length / rowsPerPage)}
+                        page={page}
+                        onChange={(_, value) => setPage(value)}
+                        sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}
+                    />
 
                     {/* Modal de Solicitud de Reembolso */}
                     <Dialog open={modalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
@@ -274,7 +275,7 @@ const History = () => {
                         </DialogTitle>
                         <DialogContent sx={{ mt: 3 }}>
                             <Typography sx={{ mb: 3, color: 'var(--color-text-secondary)' }}>
-                            Por favor, describe el motivo para solicitar el reembolso de esta transacción.
+                                Por favor, describe el motivo para solicitar el reembolso de esta transacción.
                             </Typography>
                             <TextField
                                 fullWidth
@@ -289,6 +290,7 @@ const History = () => {
                     </Dialog>
                 </Box>
             </Box>
+
         </Box>
     );
 };

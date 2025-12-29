@@ -1,11 +1,8 @@
 import { Box, Typography, Button, Stack, Grid, Card, CardContent, Divider } from '@mui/material';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import ContactsIcon from '@mui/icons-material/Contacts';
-import { useEffect } from 'react';
 import HistoryIcon from '@mui/icons-material/History';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SettingsIcon from '@mui/icons-material/Settings';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../shared components/Navbar';
 import '../../style.css';
@@ -13,13 +10,13 @@ import { useEffect, useState } from 'react';
 import api from '../../axios';
 import { fetchContacts } from '../../helpers/contacts';
 import { RxAvatar } from "react-icons/rx";
-
+import { BalanceChart, IncomeOutcomeChart } from './Stats';
 export default function Dashboard() {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0.00)
     const [contacts, setContacts] = useState([])
     const [selectedContact, setSelectedContact] = useState('')
-
+    const [transactions, setTransactions] = useState([])
     async function fetchBalance() {
         try {
             const response = await api.get(`/users/saldo?correo=${localStorage.getItem('correo')}`);
@@ -30,10 +27,119 @@ export default function Dashboard() {
         }
     }
 
+    const buildTransactions = (data) => {
+        const envios = data.envios.map((e, index) => ({
+            id: `envio-${index}`,
+            tipo: 'envio',
+            fecha: e.fecha ?? new Date(),
+            beneficiario: `${e.receptorNombre} ${e.receptorApellido}`,
+            descripcion: `📤 Envío a ${e.receptorCorreo}`,
+            monto: -e.monto,
+        }));
+
+        const recibos = data.recibos.map((r, index) => ({
+            id: `recibo-${index}`,
+            tipo: 'recibo',
+            fecha: r.fecha ?? new Date(),
+            beneficiario: `${r.emisorNombre} ${r.emisorApellido}`,
+            descripcion: `📥 Recibo de ${r.emisorCorreo}`,
+            monto: r.monto,
+        }));
+
+        const recargas = data.recargas.map((r, index) => ({
+            id: `recarga-${index}`,
+            tipo: 'recarga',
+            fecha: r.fecha ?? new Date(),
+            beneficiario: r.titular,
+            descripcion: `💳 Recarga ${r.red}`,
+            monto: r.monto,
+        }));
+
+        const retiros = data.retiros.map((r, index) => ({
+            id: `retiro-${index}`,
+            tipo: 'retiro',
+            fecha: r.fecha ?? new Date(),
+            beneficiario: r.titular,
+            descripcion: `🏦 Retiro a ${r.nombreBanco}`,
+            monto: -r.monto,
+        }));
+
+        return [...envios, ...recibos, ...recargas, ...retiros]
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    };
+
+    async function fetchTransactions() {
+        try {
+            const response = await api.get(`/api/transacciones/historial?correo=${localStorage.getItem('correo')}`);
+            if (response.status === 200) {
+                setTransactions(buildTransactions(response.data))
+            }
+        } catch (err) {
+            console.error("Error fetching transactions:", err);
+            return [];
+        }
+    }
+
     useEffect(() => {
         fetchBalance()
         fetchContacts(setContacts)
+        fetchTransactions()
     }, [])
+
+    useEffect(() => {
+        console.log(transactions)
+    }, [transactions])
+
+    const balanceByDate = transactions?.reduce((acc, tx) => {
+        const date = new Date(tx.fecha).toLocaleDateString('es-ES');
+
+        acc[date] = (acc[date] || 0) + tx.monto;
+
+        return acc;
+    }, {});
+
+
+    const buildBalanceSeries = (transactions) => {
+        let runningBalance = 0;
+
+        return transactions
+            .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+            .map((tx, index) => {
+                runningBalance += tx.monto;
+
+                // ⏱️ add artificial spacing (5 min apart)
+                const date = new Date(tx.fecha);
+                date.setMinutes(date.getMinutes() + index * 5);
+
+                return {
+                    date,
+                    balance: runningBalance,
+                };
+            });
+    };
+
+
+    const balanceChartData = buildBalanceSeries(transactions);
+    const calculateIncomeOutcome = (transactions) => {
+        let income = 0;
+        let outcome = 0;
+
+        transactions.forEach(tx => {
+            if (tx.monto >= 0) {
+                income += tx.monto;
+            } else {
+                outcome += Math.abs(tx.monto);
+            }
+        });
+
+        return [
+            { label: 'Ingresos', value: income },
+            { label: 'Gastos', value: outcome },
+        ];
+    };
+
+    const incomeOutcomeData = calculateIncomeOutcome(transactions);
+
 
     return (
         <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
@@ -116,7 +222,7 @@ export default function Dashboard() {
                                                 boxShadow: 'none',
                                             },
                                         }}
-                                        // onClick={()=> navigate('/')}
+                                    // onClick={()=> navigate('/')}
                                     >
                                         +
                                     </Button>
@@ -155,6 +261,41 @@ export default function Dashboard() {
                             </CardContent>
                         </Card>
                     </Grid>
+                    <Grid item xs={12} md={8}>
+                        {balanceChartData.length > 0 ? (
+                            <BalanceChart data={balanceChartData} />
+                          
+                        ) : (
+                            <Card sx={{ borderRadius: 3, boxShadow: 'var(--shadow-md)' }}>
+                                <CardContent>
+                                    <Typography sx={{ fontWeight: 600, mb: 2 }}>
+                                        Balance en el tiempo
+                                    </Typography>
+                                    <Typography sx={{ color: 'var(--color-text-secondary)' }}>
+                                        No hay datos suficientes para mostrar el gráfico.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </Grid>
+                    <Grid item xs={12} md={8}>
+                        {incomeOutcomeData.length > 0 ? (
+                            <IncomeOutcomeChart data={incomeOutcomeData} />
+                           
+                        ) : (
+                            <Card sx={{ borderRadius: 3, boxShadow: 'var(--shadow-md)' }}>
+                                <CardContent>
+                                    <Typography sx={{ fontWeight: 600, mb: 2 }}>
+                                        Balance en el tiempo
+                                    </Typography>
+                                    <Typography sx={{ color: 'var(--color-text-secondary)' }}>
+                                        No hay datos suficientes para mostrar el gráfico.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </Grid>
+
                 </Grid>
 
                 <Divider sx={{ my: 5 }} />
@@ -187,36 +328,23 @@ export default function Dashboard() {
                         Nueva transacción
                     </Button>
 
-                            <Button
-                                startIcon={<ContactsIcon />}
-                                sx={{
-                                    background: 'var(--color-primary)',
-                                    color: 'white',
-                                    px: 4,
-                                    py: 1.5,
-                                    fontWeight: 600,
-                                    ':hover': {
-                                        background: 'var(--color-primary-dark)',
-                                    },
-                                }}
-                                onClick={() => navigate('/contacts')}
-                            >
-                                Mis Contactos
-                            </Button>
+                    <Button
+                        startIcon={<ContactsIcon />}
+                        sx={{
+                            background: 'var(--color-primary)',
+                            color: 'white',
+                            px: 4,
+                            py: 1.5,
+                            fontWeight: 600,
+                            ':hover': {
+                                background: 'var(--color-primary-dark)',
+                            },
+                        }}
+                        onClick={() => navigate('/contacts')}
+                    >
+                        Mis Contactos
+                    </Button>
 
-                            <Button
-                                sx={{
-                                    color: 'white',
-                                    px: 4,
-                                    py: 1.5,
-                                    fontWeight: 600,
-                                    ':hover': { background: '#0369A1' },
-                                }}
-                                disabled={true}
-                                onClick={() => navigate('/transactions')}
-                            >
-                                Transacciones
-                            </Button>
                     <Button
                         startIcon={<HistoryIcon />}
                         sx={{
