@@ -33,7 +33,7 @@ export default function ContactList({ selectedContact, setSelectedContact }) {
             )
 
             if (response.status === 200 || response.status === 201) {
-                fetchContacts();
+                fetchContacts(setContacts);
                 setAddContactStatus({ ...addContactStatus, code: 200, message: 'Contacto agregado exitosamente.' })
             }
         } catch (err) {

@@ -219,7 +219,7 @@ export default function Dashboard() {
                                                 boxShadow: 'none',
                                             },
                                         }}
-                                    // onClick={()=> navigate('/')}
+                                    onClick={()=> navigate('/contacts')}
                                     >
                                         +
                                     </Button>

@@ -170,7 +170,7 @@ const History = () => {
                 >
                     <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
                         <IconButton
-                            onClick={() => navigate(-1)}
+                            onClick={() => navigate('/')}
                             sx={{
                                 color: 'var(--color-primary)',
                                 '&:hover': {
