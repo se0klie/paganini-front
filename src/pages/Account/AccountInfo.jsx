@@ -3,6 +3,7 @@ import { GenericInputField, PasswordField } from "../../shared components/Inputs
 import { useEffect, useState } from "react";
 import { ErrorModal, SuccessModal } from "../../shared components/Modals";
 import api from "../../axios";
+import Cookies from "js-cookie";
 export default function AccountInfoTab() {
     const fields = [
         { label: 'Nombres', type: 'text', placeholder: 'Ej. Juan', var_name: 'nombre' },
@@ -56,9 +57,6 @@ export default function AccountInfoTab() {
         fetchUserData();
     }, [])
 
-    useEffect(()=> {
-        console.log(form)
-    }, [form])
     const handlePasswordChange = (field, value) => {
         setPasswordForm(prev => ({
             ...prev,
@@ -80,7 +78,7 @@ export default function AccountInfoTab() {
         setNewData(prev => ({ ...prev, [label]: val }));
     };
 
-    const handlePasswordUpdate = () => {
+    async function handlePasswordUpdate() {
         let valid = true;
         const newErrors = { oldpswd: "", newpswd: "" };
 
@@ -97,13 +95,31 @@ export default function AccountInfoTab() {
         }
 
         setErrors(newErrors);
+        console.log(newErrors)
         if (!valid) {
             setEditPassword(false)
             setErrorModalOpen(true)
-            return;
+            return false;
         };
 
-        console.log("Updating password:", passwordForm);
+        try {
+            const formdata = {
+                accessToken: Cookies.get('accessToken'),
+                currentPassword: passwordForm.oldpswd,
+                newPassword: passwordForm.newpswd
+            }
+            const response = await api.post('/auth/change-password', {
+                accessToken: Cookies.get('accessToken'),
+                currentPassword: passwordForm.oldpswd,
+                newPassword: passwordForm.newpswd
+            });
+            console.log(formdata)
+        } catch (err) {
+            console.error("Error updating password:", err);
+            setEditPassword(false)
+            setErrorModalOpen(true)
+            return false;
+        }
     };
 
 
@@ -136,9 +152,6 @@ export default function AccountInfoTab() {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, ml: 'auto' }}>
-                    <Button onClick={() => {
-                        setOpen2FAModal(true)
-                    }}>Cambiar método 2FA</Button>
                     <Button sx={{ border: '1px solid blue' }} onClick={() => {
                         if (editingMode) {
                             setEditUserInfo(true)
@@ -212,8 +225,8 @@ export default function AccountInfoTab() {
                 </DialogContent>
                 <DialogActions sx={{ p: 2 }}>
                     <Button onClick={() => setEditPassword(false)} variant="outlined">Cancelar</Button>
-                    <Button onClick={() => {
-                        handlePasswordUpdate()
+                    <Button onClick={async () => {
+                        await handlePasswordUpdate()
                     }} variant="contained" color="error">
                         Confirmar
                     </Button>
@@ -299,7 +312,7 @@ export default function AccountInfoTab() {
             </Dialog>
 
             <ErrorModal open={errorModalOpen} onClose={() => setErrorModalOpen(false)}
-                message="Hubo un error al actualizar la contraseña. Por favor, intenta de nuevo."
+                message="Contraseña anterior inválida."
             />
             <SuccessModal open={successModal} onClose={() => setSuccessModal(false)}
                 message="Datos actualizados correctamente."

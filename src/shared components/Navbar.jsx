@@ -4,6 +4,9 @@ import HistoryIcon from '@mui/icons-material/History';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { CiSettings } from "react-icons/ci";
+import { IoIosContacts } from "react-icons/io";
+
 import '../style.css';
 
 export default function Navbar() {
@@ -56,17 +59,28 @@ export default function Navbar() {
                 >
                     Historial
                 </Button>
-                {/* <Button
-                    startIcon={<SubscriptionsIcon />}
-                    onClick={() => navigate('/subscriptions')}
+                <Button
+                    startIcon={<IoIosContacts />}
+                    onClick={() => navigate('/contacts')}
                     sx={{
-                        color: isActive('/subscriptions') ? 'var(--secondary-accent)' : 'var(--color-text-muted)',
-                        fontWeight: isActive('/subscriptions') ? 700 : 500,
+                        color: isActive('/contacts') ? 'var(--secondary-accent)' : 'var(--color-text-muted)',
+                        fontWeight: isActive('/contacts') ? 700 : 500,
                         '&:hover': { color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }
                     }}
                 >
-                    Suscripciones
-                </Button> */}
+                    Contactos
+                </Button>
+                 <Button
+                    startIcon={<CiSettings />}
+                    onClick={() => navigate('/account')}
+                    sx={{
+                        color: isActive('/account') ? 'var(--secondary-accent)' : 'var(--color-text-muted)',
+                        fontWeight: isActive('/account') ? 700 : 500,
+                        '&:hover': { color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }
+                    }}
+                >
+                    Configuración
+                </Button>
             </Stack>
 
             {/* Perfil y Logout*/}

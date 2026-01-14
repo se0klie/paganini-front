@@ -329,23 +329,6 @@ export default function Dashboard() {
                     </Button>
 
                     <Button
-                        startIcon={<ContactsIcon />}
-                        sx={{
-                            background: 'var(--color-primary)',
-                            color: 'white',
-                            px: 4,
-                            py: 1.5,
-                            fontWeight: 600,
-                            ':hover': {
-                                background: 'var(--color-primary-dark)',
-                            },
-                        }}
-                        onClick={() => navigate('/contacts')}
-                    >
-                        Mis Contactos
-                    </Button>
-
-                    <Button
                         startIcon={<HistoryIcon />}
                         sx={{
                             background: '#0369A1',
@@ -360,20 +343,6 @@ export default function Dashboard() {
                         Historial de Transacciones
                     </Button>
 
-                    <Button
-                        startIcon={<SettingsIcon />}
-                        sx={{
-                            color: 'var(--color-text-secondary)',
-                            border: '1px solid var(--color-border)',
-                            px: 4,
-                            py: 1.5,
-                            fontWeight: 600,
-                            ':hover': { background: 'var(--color-border)' },
-                        }}
-                        onClick={() => navigate('/account')}
-                    >
-                        Configuración
-                    </Button>
                 </Stack>
             </Box>
         </Box>
