@@ -32,7 +32,6 @@ export default function PaymentMethodList({ selectedPaymentMethod, setSelectedPa
         try {
             const response = await api.get(`/payment-methods/by-user?correo=${localStorage.getItem('correo')}`)
             setPaymentMethods(response.data);
-            console.log(response.data)
         } catch (err) {
             console.error('Error fetching payment methods:', err);
             return err

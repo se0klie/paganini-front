@@ -95,7 +95,6 @@ export default function AccountInfoTab() {
         }
 
         setErrors(newErrors);
-        console.log(newErrors)
         if (!valid) {
             setEditPassword(false)
             setErrorModalOpen(true)
@@ -113,7 +112,6 @@ export default function AccountInfoTab() {
                 currentPassword: passwordForm.oldpswd,
                 newPassword: passwordForm.newpswd
             });
-            console.log(formdata)
         } catch (err) {
             console.error("Error updating password:", err);
             setEditPassword(false)

@@ -50,7 +50,6 @@ export function PaymentPage() {
             };
 
             const response = await api.post('/api/transacciones/retiro', payload);
-            console.log(response)
             if (response?.status === 200 || response?.status === 201) {
                 setStatus('success');
                 setTimeout(() => {

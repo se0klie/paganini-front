@@ -7,7 +7,6 @@ export default function EmailVerify() {
 
     const handleVerificationSuccess = (data) => {
         // Callback cuando la verificación sea exitosa
-        console.log('Email verificado:', data);
     };
 
     const handleBack = () => {

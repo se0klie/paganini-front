@@ -54,14 +54,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             </PublicRoute>
                         }
                     />
-                    <Route
-                        path="/verify-email"
-                        element={
-                            <PublicRoute>
-                                <EmailVerify />
-                            </PublicRoute>
-                        }
-                    />
+                  
                     <Route
                         path="/invoice"
                         element={

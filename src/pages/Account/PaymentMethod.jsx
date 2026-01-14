@@ -35,7 +35,6 @@ export default function PaymentMethodTab() {
         try {
             const response = await api.get(`/payment-methods/by-user?correo=${localStorage.getItem('correo')}`)
             setPaymentMethods(response.data);
-            console.log('Payment methods fetched:', response.data);
         } catch (err) {
             console.error('Error fetching payment methods:', err);
             return err
@@ -93,7 +92,6 @@ export default function PaymentMethodTab() {
     async function handleRemovePM() {
         try {
             const response = await api.delete(`/payment-methods/${selectedCardId}`);
-            console.log('Payment method removed:', response.data);
             fetchCards();
             setOpenRemovePM(false);
         } catch (err) {

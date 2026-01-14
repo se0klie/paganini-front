@@ -86,9 +86,6 @@ export default function Dashboard() {
         fetchTransactions()
     }, [])
 
-    useEffect(() => {
-        console.log(transactions)
-    }, [transactions])
 
     const balanceByDate = transactions?.reduce((acc, tx) => {
         const date = new Date(tx.fecha).toLocaleDateString('es-ES');
