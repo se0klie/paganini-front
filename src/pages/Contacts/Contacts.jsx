@@ -73,7 +73,6 @@ export default function Contacts() {
 
   useEffect(() => {
     fetchContacts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [correo]);
 
   const handleAdd = async (e) => {
@@ -92,7 +91,7 @@ export default function Contacts() {
       setSuccess('Contacto agregado correctamente');
       fetchContacts();
     } catch (e) {
-      setError(e?.response?.data?.message || 'Error al crear el contacto');
+      setError('Error al crear el contacto, ¿Seguro que ese correo está registrado en Paganini?');
     } finally {
       setLoading(false);
     }
@@ -133,7 +132,7 @@ export default function Contacts() {
       <Container maxWidth="lg">
         <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconButton
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
             sx={{ color: 'var(--color-primary)', '&:hover': { backgroundColor: 'var(--color-border)' } }}
           >
             <ArrowBackIcon />
