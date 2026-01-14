@@ -5,11 +5,22 @@ import PaymentMethodTab from "./PaymentMethod";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../shared components/Navbar";
-
+import api from "../../axios";
 export default function AccountMainPage() {
     const [currentTab, setCurrentTab] = useState('profile')
     const navigate = useNavigate()
     const [open2FAModal, setOpen2FAModal] = useState(false)
+
+    async function handle2FAChange() {
+        try {
+            await api.post('/api/verification-code', {
+                correo: localStorage.getItem('correo')
+            })
+        } catch (err) {
+            console.error("Error sending 2FA code:", err);
+            return false;
+        }
+    }
     return (
         <Box sx={{
             backgroundColor: 'var(--color-primary)',
@@ -32,6 +43,7 @@ export default function AccountMainPage() {
                     </Button>
                     <Button sx={{ backgroundColor: currentTab !== 'profile' ? 'var(--color-bg)' : 'var(--color-secondary)', fontSize: 18, fontWeight: currentTab !== 'profile' ? 'bold' : 'normal', px: 4 }}
                         onClick={() => {
+                            handle2FAChange()
                             setOpen2FAModal(true)
                         }}
                     >

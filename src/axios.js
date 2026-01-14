@@ -9,14 +9,14 @@ const api = axios.create({
     timeout: 10000,
 });
 
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401 && !window.location.href.includes('/login')) {
-            localStorage.clear();
-            window.location.href = '/login';
-        }
-    }
-);
+// api.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         if (error.response?.status === 401 && !window.location.href.includes('/login')) {
+//             localStorage.clear();
+//             window.location.href = '/login';
+//         }
+//     }
+// );
 
 export default api;
