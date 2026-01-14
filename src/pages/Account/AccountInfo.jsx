@@ -112,6 +112,10 @@ export default function AccountInfoTab() {
                 currentPassword: passwordForm.oldpswd,
                 newPassword: passwordForm.newpswd
             });
+            if (response.status === 200) {
+                setEditPassword(false)
+                setSuccessModal(true)
+            }
         } catch (err) {
             console.error("Error updating password:", err);
             setEditPassword(false)
