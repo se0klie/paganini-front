@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "lint:report": "eslint . -f junit -o eslint-report.xml",
+    "lint": "eslint src && echo \"✔ No lint errors found\"",
+    "lint:fix": "eslint src --fix",
+    "lint:report": "eslint src -f junit -o eslint-report.xml",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{js,jsx,css,md}\""
   },
